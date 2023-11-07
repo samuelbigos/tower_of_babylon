@@ -5,19 +5,12 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] private float _segmentWidth = 50.0f;
-    [SerializeField] private Vector3 _origin = new Vector3(0.0f, 0.0f, 20.0f);
-    [SerializeField] private float _x;
-    
+    [SerializeField] private float _cameraDistance = 30.0f;
     private Camera _camera;
     
     private void Awake()
     {
         _camera = GetComponent<Camera>();
-    }
-
-    private void Start()
-    {
     }
 
     private void Update()
@@ -32,13 +25,11 @@ public class CameraController : MonoBehaviour
         // lookAt.y = pos.y;
         // transform.LookAt(lookAt);
 
-        Vector3 pos = (Player.Instance.transform.position - _origin);
-        pos.y = 0.0f;
-        pos = pos.normalized * 50.0f;
+        Vector3 pos = Utilities.Flatten(Player.Instance.transform.position).normalized * _cameraDistance;
         pos.y = Player.Instance.transform.position.y;
         _camera.transform.position = pos;
             
-        Vector3 lookAt = _origin;
+        Vector3 lookAt = Vector3.zero;
         lookAt.y = pos.y;
         transform.LookAt(lookAt);
     }

@@ -560,9 +560,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6a4a6831a9c77e42bf7389335c0af3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _segmentWidth: 50
-  _origin: {x: 0, y: 0, z: 0}
-  _x: 0
+  _cameraDistance: 30
 --- !u!4 &995606865 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 858371168250107800, guid: 0b6303d5ca874124d934dab3fe3bb580, type: 3}
@@ -728,6 +726,9 @@ MonoBehaviour:
   coyoteTime: 0.05
   jumpBufferTime: 0.05
   jumpAngleWeightFactor: 0
+  _grappleLeanInfluence: 5
+  _grappleRetraction: 1000
+  _maxForce: 0.5
 --- !u!114 &1118232196
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -904,6 +905,7 @@ GameObject:
   - component: {fileID: 1437322314}
   - component: {fileID: 1437322313}
   - component: {fileID: 1437322312}
+  - component: {fileID: 1437322315}
   m_Layer: 0
   m_Name: DebugSphere
   m_TagString: Untagged
@@ -969,13 +971,25 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1437322311}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1, y: -2.54, z: -16.12}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1437322315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1437322311}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d8cf73cbf4c9e14cbb33b7d4c90b883, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1514611700 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7657216143946436142, guid: 0b6303d5ca874124d934dab3fe3bb580, type: 3}

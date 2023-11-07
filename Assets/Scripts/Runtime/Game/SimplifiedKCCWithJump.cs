@@ -45,6 +45,9 @@ namespace nickmaltbie.OpenKCC.Demo
         [SerializeField] private float coyoteTime = 0.05f;
         [SerializeField] private float jumpBufferTime = 0.05f;
         [SerializeField] [Range(0, 1)] private float jumpAngleWeightFactor = 0.0f;
+        [SerializeField] private float _grappleLeanInfluence = 5.0f;
+        [SerializeField] private float _grappleRetraction = 10.0f;
+        [SerializeField] private float _maxForce = 1.0f;
         
         private float jumpInputElapsed = Mathf.Infinity;
         private float timeSinceLastJump = 0.0f;
@@ -55,6 +58,9 @@ namespace nickmaltbie.OpenKCC.Demo
         private CapsuleCollider capsuleCollider;
         private bool jumpInputPressed => jumpAction.action.IsPressed();// || shootAction.action.WasPressedThisFrame();
         private bool grappling;
+        private float _roofTimer;
+
+        private Vector3 _steering;
 
         private void Start()
         {
@@ -65,14 +71,14 @@ namespace nickmaltbie.OpenKCC.Demo
 
         public void ApplyGrapple(Vector3 target)
         {
-            // if (Mathf.Approximately(velocity.magnitude, 0.0f))
-            //     return;
-            
             Vector3 playerPos = Player.Instance.transform.position;
             
             // Extend/retract the grapple.
             Vector2 playerMove = movePlayer.action.ReadValue<Vector2>();
-            Vector3 extension = (target - transform.position).normalized * 10.0f * Time.deltaTime;// * playerMove.y;
+            // Rotate movement by current viewing angle
+            Quaternion viewYaw = Quaternion.Euler(0, Camera.main.transform.rotation.eulerAngles.y, 0);
+            Vector3 rotatedVector = viewYaw * playerMove;
+            Vector3 normalizedInput = rotatedVector.normalized * Mathf.Min(rotatedVector.magnitude, 1.0f);
 
             /* This chunk of code un-projects the grapple point from the circular tower,
              so forces can be accurately calculated as if on a 2D plane. Then, the direction of 
@@ -99,15 +105,37 @@ namespace nickmaltbie.OpenKCC.Demo
             if (!left) swingDir = -swingDir;
 
             // Project swing velocity onto swing direction.
-            float speed = Vector3.Dot(velocity, swingDir);
-            velocity = swingDir * speed;
+            Vector3 grappleVelocity = velocity + normalizedInput * _grappleLeanInfluence * Time.deltaTime;
+            float speed = Vector3.Dot(grappleVelocity, swingDir);
+            Vector3 desiredVelocity = swingDir * speed;
             
-            // Move based on grapple extension.
-            transform.position += extension;
+            // Move based on grapple retraction.
+            Vector3 retraction = (grapplePosProjectedForward - playerPos).normalized * _grappleRetraction * Time.deltaTime;
+            desiredVelocity += retraction;
+
+            _steering = Limit(desiredVelocity - velocity, _maxForce);
+            //_steering = desiredVelocity - velocity;
+
+            velocity += _steering;
+            //velocity = desiredVelocity;
 
             grappling = true;
         }
 
+        private static Vector3 Limit(Vector3 vec, float vMax)
+        {
+            float length = vec.magnitude;
+            if (length == 0.0f)
+            {
+                return vec;
+            }
+
+            float i = vMax / length;
+            i = Mathf.Min(i, 1.0f);
+            vec *= i;
+            return vec;
+        }
+        
         private void Update()
         {
             // Read input values from player
@@ -133,10 +161,20 @@ namespace nickmaltbie.OpenKCC.Demo
             // Check if the player is falling
             (bool onGround, float groundAngle) = CheckGrounded(velocity, out RaycastHit groundHit);
             bool falling = !(onGround && groundAngle <= maxWalkingAngle);
+            
+            // Check if the player hit their head
+            (bool onRoof, float roofAngle) = CheckRoofed(velocity, out RaycastHit roofHit);
+            _roofTimer -= Time.deltaTime;
+            if (onRoof && _roofTimer < 0.0f)
+            {
+                velocity.y = 0.0f;
+                _roofTimer = 0.5f;
+            }
 
             // If falling, increase falling speed, otherwise stop falling.
             if (falling)
             {
+                playerMove.x = 0.0f;
                 velocity += gravity * Time.deltaTime;
                 elapsedFalling += Time.deltaTime;
             }
@@ -162,10 +200,18 @@ namespace nickmaltbie.OpenKCC.Demo
                 timeSinceLastJump >= jumpCooldown &&
                 (!falling || notSlidingSinceJump);
 
+            // Read player input movement
+            var inputVector = new Vector3(playerMove.x, 0, playerMove.y);
+
+            // Rotate movement by current viewing angle
+            var viewYaw = Quaternion.Euler(0, Camera.main.transform.rotation.eulerAngles.y, 0);
+            Vector3 rotatedVector = viewYaw * inputVector;
+            Vector3 normalizedInput = rotatedVector.normalized * Mathf.Min(rotatedVector.magnitude, 1.0f);
+            
             // Have player jump if they can jump and are attempting to jump
             if (canJump && attemptingJump)
             {
-                velocity = Vector3.Lerp(Vector3.up, groundHit.normal, jumpAngleWeightFactor) * jumpVelocity;
+                velocity = Vector3.Lerp(Vector3.up + new Vector3(normalizedInput.x, 0.0f, 0.0f), groundHit.normal, jumpAngleWeightFactor) * jumpVelocity;
                 timeSinceLastJump = 0.0f;
                 jumpInputElapsed = Mathf.Infinity;
 
@@ -177,15 +223,7 @@ namespace nickmaltbie.OpenKCC.Demo
                 timeSinceLastJump += Time.deltaTime;
                 jumpInputElapsed += Time.deltaTime;
             }
-
-            // Read player input movement
-            var inputVector = new Vector3(playerMove.x, 0, playerMove.y);
-
-            // Rotate movement by current viewing angle
-            var viewYaw = Quaternion.Euler(0, Camera.main.transform.rotation.eulerAngles.y, 0);
-            Vector3 rotatedVector = viewYaw * inputVector;
-            Vector3 normalizedInput = rotatedVector.normalized * Mathf.Min(rotatedVector.magnitude, 1.0f);
-
+            
             // Scale movement by speed and time
             Vector3 movement = normalizedInput * moveSpeed * Time.deltaTime;
 
@@ -227,6 +265,17 @@ namespace nickmaltbie.OpenKCC.Demo
             bool onGround = CastSelf(transform.position, transform.rotation, Vector3.down, groundDist, out groundHit);
             float angle = Vector3.Angle(groundHit.normal, Vector3.up);
             return (onGround, angle);
+        }
+        
+        private (bool, float) CheckRoofed(Vector3 velocity, out RaycastHit roofHit)
+        {
+            roofHit = new RaycastHit();
+            if (Vector3.Dot(velocity.normalized, Vector3.down) > 0.0f)
+                return (false, 0.0f);
+            
+            bool onRoof = CastSelf(transform.position, transform.rotation, Vector3.up, groundDist, out roofHit);
+            float angle = Vector3.Angle(roofHit.normal, Vector3.down);
+            return (onRoof, angle);
         }
 
         /// <summary>
@@ -274,13 +323,6 @@ namespace nickmaltbie.OpenKCC.Demo
                     position += remaining;
 
                     // Exit as we are done bouncing
-                    break;
-                }
-
-                if (Vector3.Dot(movement.normalized, Vector3.up) > 0.5f)
-                {
-                    // Don't collide with bottom platforms while moving upwards.
-                    position += remaining;
                     break;
                 }
                 
