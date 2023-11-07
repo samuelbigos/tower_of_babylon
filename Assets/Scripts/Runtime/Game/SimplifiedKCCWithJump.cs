@@ -25,191 +25,101 @@ using UnityEngine.InputSystem;
 
 namespace nickmaltbie.OpenKCC.Demo
 {
-    /// <summary>
-    /// Example of the KCC class with a simplified movement script for learning purposes with an additional feature of a
-    /// Jump and snap down mechanic.
-    /// </summary>
     [RequireComponent(typeof(CapsuleCollider))]
     public class SimplifiedKCCWithJump : MonoBehaviour
     {
-        /// <summary>
-        /// Minimum pitch for camera movement.
-        /// </summary>
-        public const float minPitch = -90;
-
-        /// <summary>
-        /// Maximum pitch for camera movement.
-        /// </summary>
-        public const float maxPitch = 90;
-
-        [Header("Input Actions")]
-
-        /// <summary>
-        /// Action realted to moving the player, should be a two component vector.
-        /// </summary>
-        [Tooltip("Action with two axis used to move the player around.")]
-        public InputActionReference movePlayer;
-
-        /// <summary>
-        /// Action realted to moving the jumping, should be a button input.
-        /// </summary>
-        [Tooltip("Action realted to moving the jumping, should be a button input.")]
-        public InputActionReference jumpAction;
-
-        [Header("Movement Settings")]
-
-        /// <summary>
-        /// Maximum number of bounces when moving the player.
-        /// </summary>
-        [Tooltip("Maximum number of bounces when moving the player.")]
-        [SerializeField]
-        public int maxBounces = 5;
-
-        /// <summary>
-        /// Player movement speed.
-        /// </summary>
-        [Tooltip("Move speed of the player character.")]
-        [SerializeField]
-        public float moveSpeed = 5.0f;
-
-        /// <summary>
-        /// Decrease in momentum factor due to angle change when walking.
-        /// Should be a positive float value. It's an exponential applied to 
-        /// values between [0, 1] so values smaller than 1 create a positive
-        /// curve and grater than 1 for a negative curve.
-        /// </summary>
-        [Tooltip("Decrease in momentum when walking into objects (such as walls) at an angle as an exponential." +
-        "Values between [0, 1] so values smaller than 1 create a positive curve and grater than 1 for a negative curve")]
-        [SerializeField]
-        public float anglePower = 0.5f;
-
-        /// <summary>
-        /// Distance that the character can "snap down" vertical steps
-        /// </summary>
-        [Tooltip("Snap down distance when snapping onto the floor")]
-        [SerializeField]
-        private float verticalSnapDown = 0.45f;
-
-        /// <summary>
-        /// Speed at which the player falls.
-        /// </summary>
-        [Tooltip("Speed at which the player falls.")]
-        [SerializeField]
-        public Vector3 gravity = new Vector3(0, -20, 0);
-
-        [Header("Grounded Settings")]
-
-        /// <summary>
-        /// Distance at which the player is considered grounded.
-        /// </summary>
-        [Tooltip("Distance from ground at which the player will stop falling.")]
-        [SerializeField]
-        public float groundDist = 0.01f;
-
-        /// <summary>
-        /// Max angle at which the player can walk.
-        /// </summary>
-        [Tooltip("Max angle at which the player can walk.")]
-        [SerializeField]
-        public float maxWalkingAngle = 60f;
-
-        [Header("Jump Settings")]
-
-        /// <summary>
-        /// Velocity of player jump in units per second
-        /// </summary>
-        [Tooltip("Vertical velocity of player jump")]
-        [SerializeField]
-        private float jumpVelocity = 5.0f;
-
-        /// <summary>
-        /// Max angle at which the player can jump.
-        /// </summary>
-        [Tooltip("Max angle at which the player can jump.")]
-        [SerializeField]
-        public float maxJumpAngle = 80f;
-
-        /// <summary>
-        /// Minimum cooldown time between player jumps.
-        /// </summary>
-        [Tooltip("Minimum cooldown time between player jumps.")]
-        [SerializeField]
-        public float jumpCooldown = 0.25f;
-
-        /// <summary>
-        /// Time in which player can jump after they walk off the edge off a surface.
-        /// </summary>
-        [Tooltip("Time in which player can jump after they walk off the edge off a surface.")]
-        [SerializeField]
-        public float coyoteTime = 0.05f;
-
-        /// <summary>
-        /// Time in seconds that an input can be buffered for jumping.
-        /// </summary>
-        [Tooltip("Time in seconds that an input can be buffered for jumping")]
-        [SerializeField]
-        private float jumpBufferTime = 0.05f;
-
-        /// <summary>
-        /// Weight to which the player's jump is weighted towards the direction
-        /// of the surface they are standing on.
-        /// </summary>
-        [Tooltip("Weight to which the player's jump is weighted towards the angle of their surface")]
-        [SerializeField]
-        [Range(0, 1)]
-        private float jumpAngleWeightFactor = 0.0f;
-
-        /// <summary>
-        /// Time since the player last tried to hit the jump button.
-        /// </summary>
+        [SerializeField] private InputActionReference movePlayer;
+        [SerializeField] private InputActionReference jumpAction;
+        [SerializeField] private InputActionReference shootAction;
+        
+        [SerializeField] private int maxBounces = 5;
+        [SerializeField] private float moveSpeed = 5.0f;
+        [SerializeField] private float anglePower = 0.5f;
+        [SerializeField] private float verticalSnapDown = 0.45f;
+        [SerializeField] private Vector3 gravity = new Vector3(0, -20, 0);
+        [SerializeField] private float groundDist = 0.01f;
+        [SerializeField] private float maxWalkingAngle = 60f;
+        [SerializeField] private float jumpVelocity = 5.0f;
+        [SerializeField] private float maxJumpAngle = 80f;
+        [SerializeField] private float jumpCooldown = 0.25f;
+        [SerializeField] private float coyoteTime = 0.05f;
+        [SerializeField] private float jumpBufferTime = 0.05f;
+        [SerializeField] [Range(0, 1)] private float jumpAngleWeightFactor = 0.0f;
+        
         private float jumpInputElapsed = Mathf.Infinity;
-
-        /// <summary>
-        /// Time since the player last successfully jumped.
-        /// </summary>
         private float timeSinceLastJump = 0.0f;
-
-        /// <summary>
-        /// Time in which the player has been falling.
-        /// </summary>
         private float elapsedFalling = 0f;
-
-        /// <summary>
-        /// Has the player jumped while sliding?
-        /// </summary>
         private bool notSlidingSinceJump = true;
-
-        /// <summary>
-        /// Velocity at which player is moving.
-        /// </summary>
         private Vector3 velocity;
-
-        /// <summary>
-        /// Current angle at which the player is looking.
-        /// </summary>
         private Vector2 cameraAngle;
-
-        /// <summary>
-        /// Configuration for capsule collider to compute player collision.
-        /// </summary>
         private CapsuleCollider capsuleCollider;
+        private bool jumpInputPressed => jumpAction.action.IsPressed();// || shootAction.action.WasPressedThisFrame();
+        private bool grappling;
 
-        /// <summary>
-        /// Is the player pressing jump action.
-        /// </summary>
-        private bool jumpInputPressed => jumpAction.action.IsPressed();
-
-        public void Start()
+        private void Start()
         {
             capsuleCollider = GetComponent<CapsuleCollider>();
             Rigidbody rigidbody = GetComponent<Rigidbody>();
             rigidbody.isKinematic = true;
         }
 
-        public void Update()
+        public void ApplyGrapple(Vector3 target)
+        {
+            // if (Mathf.Approximately(velocity.magnitude, 0.0f))
+            //     return;
+            
+            Vector3 playerPos = Player.Instance.transform.position;
+            
+            // Extend/retract the grapple.
+            Vector2 playerMove = movePlayer.action.ReadValue<Vector2>();
+            Vector3 extension = (target - transform.position).normalized * 10.0f * Time.deltaTime;// * playerMove.y;
+
+            /* This chunk of code un-projects the grapple point from the circular tower,
+             so forces can be accurately calculated as if on a 2D plane. Then, the direction of 
+             swing is calculated and current velocity is projected onto that vector, so player
+             moves restricted to the arc made by the grapple. */
+            Vector3 playerPosN = Utilities.Flatten(playerPos).normalized;
+            Vector3 grapplePosN = Utilities.Flatten(target).normalized;
+            
+            // Gets the distance to the grapple point on 2D plane.
+            float angle = Mathf.Acos(Vector3.Dot(playerPosN, grapplePosN));
+            float distance = Utilities.TOWER_CIRCUMFERENCE * (angle / (2.0f * Mathf.PI));
+
+            // Project the grapple post onto that 2D plane.
+            Vector3 playerForward = Vector3.Cross(playerPosN, Vector3.up).normalized;
+            bool left = Vector3.Dot(playerForward, (target - playerPos).normalized) < 0.0f;
+            if (left) playerForward = -playerForward;
+            
+            Vector3 grapplePosProjectedForward = playerPos + playerForward * distance;
+            grapplePosProjectedForward.y += (target - playerPos).y;
+
+            // Calculate swing direction.
+            Vector3 grappleDir = (grapplePosProjectedForward - playerPos).normalized;
+            Vector3 swingDir = Vector3.Cross(grappleDir, Utilities.Flatten(playerPos)).normalized;
+            if (!left) swingDir = -swingDir;
+
+            // Project swing velocity onto swing direction.
+            float speed = Vector3.Dot(velocity, swingDir);
+            velocity = swingDir * speed;
+            
+            // Move based on grapple extension.
+            transform.position += extension;
+
+            grappling = true;
+        }
+
+        private void Update()
         {
             // Read input values from player
             Vector2 playerMove = movePlayer.action.ReadValue<Vector2>();
+            
+            if (grappling)
+            {
+                playerMove.x = 0.0f;
+            }
+            playerMove.y = 0.0f;
+
+            grappling = false;
 
             // If player is not allowed to move, stop player input
             if (PlayerInputUtils.playerMovementState == PlayerInputState.Deny)
@@ -272,7 +182,7 @@ namespace nickmaltbie.OpenKCC.Demo
             var inputVector = new Vector3(playerMove.x, 0, playerMove.y);
 
             // Rotate movement by current viewing angle
-            var viewYaw = Quaternion.Euler(0, cameraAngle.y, 0);
+            var viewYaw = Quaternion.Euler(0, Camera.main.transform.rotation.eulerAngles.y, 0);
             Vector3 rotatedVector = viewYaw * inputVector;
             Vector3 normalizedInput = rotatedVector.normalized * Mathf.Min(rotatedVector.magnitude, 1.0f);
 
@@ -286,18 +196,15 @@ namespace nickmaltbie.OpenKCC.Demo
                 movement = Vector3.ProjectOnPlane(movement, groundHit.normal);
             }
             
-            // Lock Z position
-            float z = transform.position.z;
+            // Lock position to given radius.
+            transform.position = Utilities.ProjectOnTower(transform.position);
 
             // Attempt to move the player based on player movement
             transform.position = MovePlayer(movement);
 
             // Move player based on falling speed
             transform.position = MovePlayer(velocity * Time.deltaTime);
-
-            // Lock Z position
-            transform.position = new Vector3(transform.position.x, transform.position.y, z);
-
+            
             // If player was on ground at the start of the ground, snap the player down
             if (onGround && !attemptingJump)
             {
@@ -325,7 +232,7 @@ namespace nickmaltbie.OpenKCC.Demo
         /// <summary>
         /// Snap the player down if they are within a specific distance of the ground.
         /// </summary>
-        public void SnapPlayerDown()
+        private void SnapPlayerDown()
         {
             bool closeToGround = CastSelf(
                 transform.position,
@@ -439,7 +346,7 @@ namespace nickmaltbie.OpenKCC.Demo
         /// <param name="hit">First object hit and related information, will have a distance of Mathf.Infinity if none
         /// is found.</param>
         /// <returns>True if an object is hit within distance, false otherwise.</returns>
-        public bool CastSelf(Vector3 pos, Quaternion rot, Vector3 dir, float dist, out RaycastHit hit)
+        private bool CastSelf(Vector3 pos, Quaternion rot, Vector3 dir, float dist, out RaycastHit hit)
         {
             // Get Parameters associated with the KCC
             Vector3 center = rot * capsuleCollider.center + pos;

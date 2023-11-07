@@ -1,11 +1,14 @@
 using System;
 using ImGuiNET;
+using nickmaltbie.OpenKCC.Demo;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Vector3 = UnityEngine.Vector3;
 
 public class Player : Singleton<Player>
 {
+    public SimplifiedKCCWithJump Controller;
+    
     private Camera _camera;
     private PlayerInput _input;
 
@@ -21,6 +24,7 @@ public class Player : Singleton<Player>
         _camera = Camera.main;
 
         _input = GetComponent<PlayerInput>();
+        Controller = GetComponent<SimplifiedKCCWithJump>();
     }
 
     private void Start()
@@ -50,8 +54,8 @@ public class Player : Singleton<Player>
             _prevOverUi = false;
         }
 
-        Vector3 camPos = transform.position;
-        camPos.z = _camera.transform.position.z;
-        _camera.transform.position = camPos;
+        // Vector3 camPos = transform.position;
+        // camPos.z = _camera.transform.position.z;
+        // _camera.transform.position = camPos;
     }
 }

@@ -15,21 +15,21 @@ public class Game : MonoBehaviour
 
     private void Start()
     {
-        for (int i = 0; i <= _numSegments; i++)
-        {
-            GameObject segment = Instantiate(_towerSegment, Vector3.zero, Quaternion.identity);
-            _segments.Add(segment);
-        }
+        // for (int i = 0; i <= _numSegments; i++)
+        // {
+        //     GameObject segment = Instantiate(_towerSegment, Vector3.zero, Quaternion.identity);
+        //     _segments.Add(segment);
+        // }
     }
 
     private void Update()
     {
-        int playerSegment = Mathf.FloorToInt(_player.transform.position.y / _segmentHeight);
-        if (_prevPlayerSegment != playerSegment)
-        {
-            UpdateSegmentPositions(playerSegment);
-        }
-        _prevPlayerSegment = playerSegment;
+        // int playerSegment = Mathf.FloorToInt(_player.transform.position.y / _segmentHeight);
+        // if (_prevPlayerSegment != playerSegment)
+        // {
+        //     UpdateSegmentPositions(playerSegment);
+        // }
+        // _prevPlayerSegment = playerSegment;
     }
 
     private void UpdateSegmentPositions(int playerSegment)

@@ -5,6 +5,9 @@ public static class Utilities
 {
     public static readonly System.Random RNG = new System.Random(0);
 
+    public static readonly float TOWER_RADIUS = 16.0f;
+    public static readonly float TOWER_CIRCUMFERENCE = 2.0f * Mathf.PI * TOWER_RADIUS;
+
     public enum PhysicsLayers
     {
         Default = 0,
@@ -15,12 +18,26 @@ public static class Utilities
         UI = 5,
         Ship = 6,
         Enemy = 7,
-        Prop = 8,
+        Grapple = 8,
     }
     
     public const int PlayerCollisionMask = ~(1 << (int)PhysicsLayers.Player);
     public const int ShipCastCollisionMask = 1 << (int)PhysicsLayers.Ship;
     public const int EnemyCollisionMask = 1 << (int) PhysicsLayers.Enemy;
+
+    public static Vector3 ProjectOnTower(Vector3 point)
+    {
+        Vector3 pos = point;
+        pos.y = 0.0f;
+        pos = pos.normalized * Utilities.TOWER_RADIUS;
+        pos.y = point.y;
+        return pos;
+    }
+
+    public static Vector3 Flatten(Vector3 vec)
+    {
+        return new Vector3(vec.x, 0.0f, vec.z);
+    }
     
     // https://answers.unity.com/questions/421968/normal-distribution-random.html
     public static float RandomGaussian(float minValue = -1.0f, float maxValue = 1.0f, System.Random rng = null)
