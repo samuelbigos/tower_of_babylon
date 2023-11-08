@@ -616,7 +616,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6a4a6831a9c77e42bf7389335c0af3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cameraDistance: 30
+  _cameraDistance: 20
 --- !u!4 &995606865 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 858371168250107800, guid: 0b6303d5ca874124d934dab3fe3bb580, type: 3}
