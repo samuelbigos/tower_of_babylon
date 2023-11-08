@@ -5,7 +5,7 @@ public static class Utilities
 {
     public static readonly System.Random RNG = new System.Random(0);
 
-    public static readonly float TOWER_RADIUS = 16.0f;
+    public static readonly float TOWER_RADIUS = 25.0f;
     public static readonly float TOWER_CIRCUMFERENCE = 2.0f * Mathf.PI * TOWER_RADIUS;
 
     public enum PhysicsLayers
