@@ -7,6 +7,8 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [SerializeField] private float _cameraDistance = 20.0f;
+    [SerializeField] private float _yOffset = 2.0f;
+    
     private Camera _camera;
     
     private void Awake()
@@ -27,11 +29,10 @@ public class CameraController : MonoBehaviour
         // transform.LookAt(lookAt);
 
         Vector3 pos = Utilities.Flatten(Player.Instance.transform.position).normalized * (_cameraDistance + Utilities.TOWER_RADIUS );
-        pos.y = Player.Instance.transform.position.y;
+        pos.y = Player.Instance.transform.position.y + _yOffset;
         _camera.transform.position = pos;
             
-        Vector3 lookAt = Vector3.zero;
-        lookAt.y = pos.y;
+        Vector3 lookAt = Player.Instance.transform.position;
         transform.LookAt(lookAt);
     }
 }
