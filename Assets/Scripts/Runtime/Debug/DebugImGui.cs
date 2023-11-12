@@ -78,10 +78,11 @@ public class DebugImGui : Singleton<DebugImGui>, Input.IDebugActions
                 foreach (RegisteredWindow window in _registeredWindows)
                 {
                     bool selected = _windowsSelected[window.Id];
-                    // if (ImGui.MenuItem($"{window.Name}",  Utilities.ActionToHotkeyString(_input.FindAction(window.InputActionName, true)), selected))
-                    // {
-                    //     SetWindowSelected(window.Id, selected);
-                    // }
+                    string shortcut = Utilities.ActionToHotkeyString(_input.FindAction(window.InputActionName, false));
+                    if (ImGui.MenuItem($"{window.Name}", shortcut, selected))
+                    {
+                        SetWindowSelected(window.Id, selected);
+                    }
                 }
                 ImGui.EndMenu();
             }

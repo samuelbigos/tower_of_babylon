@@ -34,19 +34,34 @@ public class GrappleController : MonoBehaviour
         // Grapple target preview
         Camera cam = Camera.main;
         Vector2 mousePos = Mouse.current.position.ReadValue();
-        Vector3 mouseWorld = cam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, (transform.position - cam.transform.position).magnitude));
-        mouseWorld = Utilities.ProjectOnTower(mouseWorld);
+        Vector3 mouseWorld = Vector3.one;
 
+        if (!Game.WrapAroundTower)
+        {
+            Plane plane = new Plane(Vector3.forward, Vector3.zero);
+            Ray ray = cam.ScreenPointToRay(mousePos);
+            if (plane.Raycast(ray, out float dist))
+            {
+                mouseWorld = ray.GetPoint(dist);
+            }
+        }
+        else
+        {
+            mouseWorld = cam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, (transform.position - cam.transform.position).magnitude));
+            mouseWorld = Utilities.ProjectOnTower(mouseWorld);
+        }
+        
         const int mask = 1 << (int) Utilities.PhysicsLayers.Grapple;
         bool didHit = Physics.Raycast(transform.position, (mouseWorld - transform.position).normalized, out RaycastHit hit, 100.0f, mask);
         _grappleTargetGO.SetActive(didHit);
         if (didHit)
         {
-            _grappleTargetGO.transform.position = Utilities.ProjectOnTower(hit.point);
+            Vector3 grapplePoint = Game.WrapAroundTower ? Utilities.ProjectOnTower(hit.point) : hit.point;
+            _grappleTargetGO.transform.position = grapplePoint;
             
             if (shoot)
             {
-                ShootGrapple(Utilities.ProjectOnTower(hit.point));
+                ShootGrapple(grapplePoint);
             }
         }
         

@@ -7,7 +7,7 @@ using Vector3 = UnityEngine.Vector3;
 
 public class Player : Singleton<Player>
 {
-    public SimplifiedKCCWithJump Controller;
+    public KinematicCharacterController Controller;
     
     private Camera _camera;
     private PlayerInput _input;
@@ -24,7 +24,7 @@ public class Player : Singleton<Player>
         _camera = Camera.main;
 
         _input = GetComponent<PlayerInput>();
-        Controller = GetComponent<SimplifiedKCCWithJump>();
+        Controller = GetComponent<KinematicCharacterController>();
     }
 
     private void Start()
@@ -53,9 +53,10 @@ public class Player : Singleton<Player>
             _input.ActivateInput();
             _prevOverUi = false;
         }
+    }
 
-        // Vector3 camPos = transform.position;
-        // camPos.z = _camera.transform.position.z;
-        // _camera.transform.position = camPos;
+    public void Teleport(Vector3 position)
+    {
+        transform.position = position;
     }
 }

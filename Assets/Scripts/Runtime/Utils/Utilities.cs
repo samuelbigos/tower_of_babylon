@@ -5,7 +5,7 @@ public static class Utilities
 {
     public static readonly System.Random RNG = new System.Random(0);
 
-    public static readonly float TOWER_RADIUS = 25.0f;
+    public static readonly float TOWER_RADIUS = 50.0f;
     public static readonly float TOWER_CIRCUMFERENCE = 2.0f * Mathf.PI * TOWER_RADIUS;
 
     public enum PhysicsLayers
@@ -79,6 +79,7 @@ public static class Utilities
 
     public static string ActionToHotkeyString(InputAction action)
     {
+        if (action == null) return "";
         string hotkey = "";
         for (int i = 0; i < action.controls.Count; i++)
         {
@@ -88,5 +89,19 @@ public static class Utilities
                 hotkey += "+";
         }
         return hotkey;
+    }
+    
+    public static bool IntersectPlane(Vector3 planeNormal, Vector3 planeOrigin, Vector3 rayDir, Vector3 rayOrigin, out float t)
+    {
+        float denom = Vector3.Dot(planeNormal, rayDir);
+        if (denom > 1e-6) 
+        {
+            Vector3 p0l0 = planeOrigin - rayOrigin;
+            t = Vector3.Dot(p0l0, planeNormal) / denom; 
+            return (t >= 0);
+        }
+
+        t = 0;
+        return false;
     }
 }
