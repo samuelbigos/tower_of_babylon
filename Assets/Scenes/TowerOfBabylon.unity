@@ -367,6 +367,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1632467385873334719, guid: dc883a1bfe4437544906c0714fa2b40e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 13.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1632467385873334719, guid: dc883a1bfe4437544906c0714fa2b40e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -50.27
+      objectReference: {fileID: 0}
+    - target: {fileID: 2934136542923171613, guid: dc883a1bfe4437544906c0714fa2b40e, type: 3}
+      propertyPath: _wrapAroundTower
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4249857664729669896, guid: dc883a1bfe4437544906c0714fa2b40e, type: 3}
       propertyPath: m_Name
       value: Game

@@ -68,6 +68,8 @@ namespace nickmaltbie.OpenKCC.Demo
         private bool _grappling;
         private Vector3 _steering;
 
+        public Vector3 Velocity => _velocity;
+        
         private void Start()
         {
             capsuleCollider = GetComponent<CapsuleCollider>();
@@ -144,12 +146,12 @@ namespace nickmaltbie.OpenKCC.Demo
             if (!left) swingDir = -swingDir;
 
             // Project swing velocity onto swing direction.
-            Vector3 grappleVelocity = _velocity + normalizedInput * _grappleLeanInfluence * Time.deltaTime;
+            Vector3 grappleVelocity = _velocity + normalizedInput * _grappleLeanInfluence * Time.fixedDeltaTime;
             float speed = Vector3.Dot(grappleVelocity, swingDir);
             Vector3 desiredVelocity = swingDir * speed;
             
             // Move based on grapple retraction.
-            Vector3 retraction = (grapplePosProjectedForward - playerPos).normalized * _grappleRetraction * Time.deltaTime;
+            Vector3 retraction = (grapplePosProjectedForward - playerPos).normalized * _grappleRetraction;
             desiredVelocity += retraction * playerMove.y;
 
             // Use steering forces to apply some smoothing to the grapple forces.
@@ -157,7 +159,7 @@ namespace nickmaltbie.OpenKCC.Demo
             _velocity += _steering;
         }
         
-        private void Update()
+        private void FixedUpdate()
         {
             if (_grappling)
             {
@@ -190,13 +192,13 @@ namespace nickmaltbie.OpenKCC.Demo
             if (falling)
             {
                 playerMove.x = 0.0f;
-                _velocity += gravity * Time.deltaTime;
-                elapsedFalling += Time.deltaTime;
+                _velocity += gravity * Time.fixedDeltaTime;
+                elapsedFalling += Time.fixedDeltaTime;
             }
             else
             {
                 Vector3 retardation = -_velocity * _groundVelocityRetardation;
-                _velocity += retardation * Time.deltaTime;
+                _velocity += retardation * Time.fixedDeltaTime;
                 elapsedFalling = 0;
                 notSlidingSinceJump = true;
             }
@@ -236,12 +238,12 @@ namespace nickmaltbie.OpenKCC.Demo
             }
             else
             {
-                timeSinceLastJump += Time.deltaTime;
-                jumpInputElapsed += Time.deltaTime;
+                timeSinceLastJump += Time.fixedDeltaTime;
+                jumpInputElapsed += Time.fixedDeltaTime;
             }
             
             // Scale movement by speed and time
-            Vector3 movement = normalizedInput * moveSpeed * Time.deltaTime;
+            Vector3 movement = normalizedInput * moveSpeed * Time.fixedDeltaTime;
 
             // If the player is standing on the ground, project their movement onto that plane
             // This allows for walking down slopes smoothly.
@@ -268,7 +270,7 @@ namespace nickmaltbie.OpenKCC.Demo
             }
 
             // Move player based on falling speed
-            transform.position = MovePlayer(_velocity * Time.deltaTime);
+            transform.position = MovePlayer(_velocity * Time.fixedDeltaTime);
             
             // If player was on ground at the start of the ground, snap the player down
             if (onGround && !attemptingJump)
