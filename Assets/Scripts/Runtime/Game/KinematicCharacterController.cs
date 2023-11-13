@@ -45,21 +45,27 @@ namespace nickmaltbie.OpenKCC.Demo
         [SerializeField] private float coyoteTime = 0.05f;
         [SerializeField] private float jumpBufferTime = 0.05f;
         [SerializeField] [Range(0, 1)] private float jumpAngleWeightFactor = 0.0f;
+        [SerializeField] private float _groundVelocityRetardation = 0.9f;
+        
+        [Header("Grappling")]
         [SerializeField] private float _grappleLeanInfluence = 5.0f;
         [SerializeField] private float _grappleRetraction = 10.0f;
         [SerializeField] private float _maxForce = 1.0f;
+        [SerializeField] private float _bounceGrapple = 1.0f;
+        [SerializeField] private float _bounce = 1.0f;
         
         private float jumpInputElapsed = Mathf.Infinity;
         private float timeSinceLastJump = 0.0f;
         private float elapsedFalling = 0f;
         private bool notSlidingSinceJump = true;
-        private Vector3 velocity;
+        private Vector3 _velocity;
         private Vector2 cameraAngle;
         private CapsuleCollider capsuleCollider;
         private bool jumpInputPressed => jumpAction.action.IsPressed();// || shootAction.action.WasPressedThisFrame();
-        private bool grappling;
         private float _roofTimer;
 
+        private Vector3 _grappleTarget;
+        private bool _grappling;
         private Vector3 _steering;
 
         private void Start()
@@ -69,62 +75,15 @@ namespace nickmaltbie.OpenKCC.Demo
             rigidbody.isKinematic = true;
         }
 
-        public void ApplyGrapple(Vector3 target)
+        public void SetGrapple(Vector3 target)
         {
-            Vector3 playerPos = Player.Instance.transform.position;
-            
-            // Extend/retract the grapple.
-            Vector2 playerMove = movePlayer.action.ReadValue<Vector2>();
-            // Rotate movement by current viewing angle
-            Quaternion viewYaw = Quaternion.Euler(0, Camera.main.transform.rotation.eulerAngles.y, 0);
-            Vector3 rotatedVector = viewYaw * playerMove;
-            Vector3 normalizedInput = rotatedVector.normalized * Mathf.Min(rotatedVector.magnitude, 1.0f);
-            
-            Vector3 playerPosN = Utilities.Flatten(playerPos).normalized;
-            Vector3 grapplePosN = Utilities.Flatten(target).normalized;
-            Vector3 grapplePosProjectedForward = Vector3.zero;
-            Vector3 playerForward = Vector3.Cross(playerPosN, Vector3.up).normalized;
-            bool left = Vector3.Dot(playerForward, (target - playerPos).normalized) < 0.0f;
-            if (left) playerForward = -playerForward;
-            if (Game.WrapAroundTower)
-            {
-                /* This chunk of code un-projects the grapple point from the circular tower,
-                 so forces can be accurately calculated as if on a 2D plane. Then, the direction of 
-                 swing is calculated and current velocity is projected onto that vector, so player
-                 moves restricted to the arc made by the grapple. */
+            _grappleTarget = target;
+            _grappling = true;
+        }
 
-                // Gets the distance to the grapple point on 2D plane.
-                float angle = Mathf.Acos(Vector3.Dot(playerPosN, grapplePosN));
-                float distance = Utilities.TOWER_CIRCUMFERENCE * (angle / (2.0f * Mathf.PI));
-
-                grapplePosProjectedForward = playerPos + playerForward * distance;
-                grapplePosProjectedForward.y += (target - playerPos).y;
-            }
-            else
-            {
-                grapplePosProjectedForward = target;
-            }
-            
-            // Calculate swing direction.
-            Vector3 grappleDir = (grapplePosProjectedForward - playerPos).normalized;
-            Vector3 fromCamera = Game.WrapAroundTower ? Utilities.Flatten(playerPos) : Vector3.forward;
-            Vector3 swingDir = Vector3.Cross(grappleDir, fromCamera).normalized;
-            if (!left) swingDir = -swingDir;
-
-            // Project swing velocity onto swing direction.
-            Vector3 grappleVelocity = velocity + normalizedInput * _grappleLeanInfluence * Time.deltaTime;
-            float speed = Vector3.Dot(grappleVelocity, swingDir);
-            Vector3 desiredVelocity = swingDir * speed;
-            
-            // Move based on grapple retraction.
-            Vector3 retraction = (grapplePosProjectedForward - playerPos).normalized * _grappleRetraction * Time.deltaTime;
-            desiredVelocity += retraction;
-
-            // Use steering forces to apply some smoothing to the grapple forces.
-            _steering = Limit(desiredVelocity - velocity, _maxForce);
-            velocity += _steering;
-
-            grappling = true;
+        public void StopGrapple()
+        {
+            _grappling = false;
         }
 
         private static Vector3 Limit(Vector3 vec, float vMax)
@@ -140,19 +99,79 @@ namespace nickmaltbie.OpenKCC.Demo
             vec *= i;
             return vec;
         }
+
+        private void DoGrapple()
+        {
+            Vector3 playerPos = Player.Instance.transform.position;
+            
+            // Extend/retract the grapple.
+            Vector2 playerMove = movePlayer.action.ReadValue<Vector2>();
+            
+            // Rotate movement by current viewing angle
+            Quaternion viewYaw = Quaternion.Euler(0, Camera.main.transform.rotation.eulerAngles.y, 0);
+            Vector3 rotatedVector = viewYaw * playerMove;
+            Vector3 normalizedInput = rotatedVector.normalized * Mathf.Min(rotatedVector.magnitude, 1.0f);
+            
+            Vector3 playerPosN = Utilities.Flatten(playerPos).normalized;
+            Vector3 grapplePosN = Utilities.Flatten(_grappleTarget).normalized;
+            Vector3 grapplePosProjectedForward = Vector3.zero;
+            Vector3 playerForward = Vector3.Cross(playerPosN, Vector3.up).normalized;
+            bool left = Vector3.Dot(playerForward, (_grappleTarget - playerPos).normalized) < 0.0f;
+            if (left) playerForward = -playerForward;
+            if (Game.WrapAroundTower)
+            {
+                /* This chunk of code un-projects the grapple point from the circular tower,
+                 so forces can be accurately calculated as if on a 2D plane. Then, the direction of 
+                 swing is calculated and current velocity is projected onto that vector, so player
+                 moves restricted to the arc made by the grapple. */
+
+                // Gets the distance to the grapple point on 2D plane.
+                float angle = Mathf.Acos(Vector3.Dot(playerPosN, grapplePosN));
+                float distance = Utilities.TOWER_CIRCUMFERENCE * (angle / (2.0f * Mathf.PI));
+
+                grapplePosProjectedForward = playerPos + playerForward * distance;
+                grapplePosProjectedForward.y += (_grappleTarget - playerPos).y;
+            }
+            else
+            {
+                grapplePosProjectedForward = _grappleTarget;
+            }
+            
+            // Calculate swing direction.
+            Vector3 grappleDir = (grapplePosProjectedForward - playerPos).normalized;
+            Vector3 fromCamera = Game.WrapAroundTower ? Utilities.Flatten(playerPos) : Vector3.forward;
+            Vector3 swingDir = Vector3.Cross(grappleDir, fromCamera).normalized;
+            if (!left) swingDir = -swingDir;
+
+            // Project swing velocity onto swing direction.
+            Vector3 grappleVelocity = _velocity + normalizedInput * _grappleLeanInfluence * Time.deltaTime;
+            float speed = Vector3.Dot(grappleVelocity, swingDir);
+            Vector3 desiredVelocity = swingDir * speed;
+            
+            // Move based on grapple retraction.
+            Vector3 retraction = (grapplePosProjectedForward - playerPos).normalized * _grappleRetraction * Time.deltaTime;
+            desiredVelocity += retraction * playerMove.y;
+
+            // Use steering forces to apply some smoothing to the grapple forces.
+            _steering = Limit(desiredVelocity - _velocity, _maxForce);
+            _velocity += _steering;
+        }
         
         private void Update()
         {
+            if (_grappling)
+            {
+                DoGrapple();
+            }
+
             // Read input values from player
             Vector2 playerMove = movePlayer.action.ReadValue<Vector2>();
             
-            if (grappling)
+            if (_grappling)
             {
                 playerMove.x = 0.0f;
             }
             playerMove.y = 0.0f;
-
-            grappling = false;
 
             // If player is not allowed to move, stop player input
             if (PlayerInputUtils.playerMovementState == PlayerInputState.Deny)
@@ -164,28 +183,20 @@ namespace nickmaltbie.OpenKCC.Demo
             transform.rotation = Quaternion.Euler(0, cameraAngle.y, 0);
 
             // Check if the player is falling
-            (bool onGround, float groundAngle) = CheckGrounded(velocity, out RaycastHit groundHit);
+            (bool onGround, float groundAngle) = CheckGrounded(_velocity, out RaycastHit groundHit);
             bool falling = !(onGround && groundAngle <= maxWalkingAngle);
-            
-            // Check if the player hit their head
-            (bool onRoof, float roofAngle) = CheckRoofed(velocity, out RaycastHit roofHit);
-            _roofTimer -= Time.deltaTime;
-            if (onRoof && _roofTimer < 0.0f)
-            {
-                velocity.y = 0.0f;
-                _roofTimer = 0.5f;
-            }
 
             // If falling, increase falling speed, otherwise stop falling.
             if (falling)
             {
                 playerMove.x = 0.0f;
-                velocity += gravity * Time.deltaTime;
+                _velocity += gravity * Time.deltaTime;
                 elapsedFalling += Time.deltaTime;
             }
             else
             {
-                velocity = Vector3.zero;
+                Vector3 retardation = -_velocity * _groundVelocityRetardation;
+                _velocity += retardation * Time.deltaTime;
                 elapsedFalling = 0;
                 notSlidingSinceJump = true;
             }
@@ -216,7 +227,7 @@ namespace nickmaltbie.OpenKCC.Demo
             // Have player jump if they can jump and are attempting to jump
             if (canJump && attemptingJump)
             {
-                velocity = Vector3.Lerp(Vector3.up + new Vector3(normalizedInput.x, 0.0f, 0.0f), groundHit.normal, jumpAngleWeightFactor) * jumpVelocity;
+                _velocity = Vector3.Lerp(Vector3.up + new Vector3(normalizedInput.x, 0.0f, 0.0f), groundHit.normal, jumpAngleWeightFactor) * jumpVelocity;
                 timeSinceLastJump = 0.0f;
                 jumpInputElapsed = Mathf.Infinity;
 
@@ -244,12 +255,20 @@ namespace nickmaltbie.OpenKCC.Demo
             {
                 transform.position = Utilities.ProjectOnTower(transform.position);
             }
-
+            
             // Attempt to move the player based on player movement
             transform.position = MovePlayer(movement);
+            
+            if (!falling && !attemptingJump)
+            {
+                if (!Mathf.Approximately(playerMove.x, 0.0f))
+                {
+                    _velocity = movement;
+                }
+            }
 
             // Move player based on falling speed
-            transform.position = MovePlayer(velocity * Time.deltaTime);
+            transform.position = MovePlayer(_velocity * Time.deltaTime);
             
             // If player was on ground at the start of the ground, snap the player down
             if (onGround && !attemptingJump)
@@ -318,6 +337,8 @@ namespace nickmaltbie.OpenKCC.Demo
 
             Vector3 remaining = movement;
 
+            float bounceStrength = _grappling ? _bounceGrapple : _bounce;
+            Vector3 reflectedVelocity = _velocity;
             int bounces = 0;
 
             while (bounces < maxBounces && remaining.magnitude > KCCUtils.Epsilon)
@@ -377,10 +398,17 @@ namespace nickmaltbie.OpenKCC.Demo
                 {
                     remaining = projected;
                 }
-
+                
+                // Apply bounce force to velocity.
+                float dot = Vector3.Dot(planeNormal, reflectedVelocity);
+                reflectedVelocity -= planeNormal * dot * (1.0f + bounceStrength);
+                
                 // Track number of times the character has bounced
                 bounces++;
             }
+            
+            // Apply bounce force to velocity.
+            _velocity = reflectedVelocity;
 
             // We're done, player was moved as part of loop
             return position;

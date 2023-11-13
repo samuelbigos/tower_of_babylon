@@ -476,33 +476,29 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1632467385873334719, guid: dc883a1bfe4437544906c0714fa2b40e, type: 3}
-      propertyPath: m_LocalPosition.x
+    - target: {fileID: 2704298375568545954, guid: dc883a1bfe4437544906c0714fa2b40e, type: 3}
+      propertyPath: _bounce
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704298375568545954, guid: dc883a1bfe4437544906c0714fa2b40e, type: 3}
+      propertyPath: _maxForce
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704298375568545954, guid: dc883a1bfe4437544906c0714fa2b40e, type: 3}
+      propertyPath: _bounceGrapple
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704298375568545954, guid: dc883a1bfe4437544906c0714fa2b40e, type: 3}
+      propertyPath: _grappleRetraction
+      value: 2500
+      objectReference: {fileID: 0}
+    - target: {fileID: 2704298375568545954, guid: dc883a1bfe4437544906c0714fa2b40e, type: 3}
+      propertyPath: _grappleLeanInfluence
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1632467385873334719, guid: dc883a1bfe4437544906c0714fa2b40e, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 11
-      objectReference: {fileID: 0}
-    - target: {fileID: 1632467385873334719, guid: dc883a1bfe4437544906c0714fa2b40e, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1632467385873334719, guid: dc883a1bfe4437544906c0714fa2b40e, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1632467385873334719, guid: dc883a1bfe4437544906c0714fa2b40e, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1632467385873334719, guid: dc883a1bfe4437544906c0714fa2b40e, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2934136542923171613, guid: dc883a1bfe4437544906c0714fa2b40e, type: 3}
-      propertyPath: _wrapAroundTower
-      value: 0
+    - target: {fileID: 2704298375568545954, guid: dc883a1bfe4437544906c0714fa2b40e, type: 3}
+      propertyPath: _groundVelocityRetardation
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4249857664729669896, guid: dc883a1bfe4437544906c0714fa2b40e, type: 3}
       propertyPath: m_Name

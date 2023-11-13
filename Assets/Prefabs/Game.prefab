@@ -30,8 +30,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 184195111704751970}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.5, y: 23.81, z: 50}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 11, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -161,8 +161,10 @@ MonoBehaviour:
   jumpBufferTime: 0.05
   jumpAngleWeightFactor: 0
   _grappleLeanInfluence: 5
-  _grappleRetraction: 1000
-  _maxForce: 0.5
+  _grappleRetraction: 1500
+  _maxForce: 0.25
+  _bounceGrapple: 1
+  _bounce: 1
 --- !u!114 &3000030825613366836
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -328,7 +330,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _player: {fileID: 4879683444035851351}
-  _wrapAroundTower: 1
+  _wrapAroundTower: 0
 --- !u!1 &5978184971142088593
 GameObject:
   m_ObjectHideFlags: 0
@@ -506,7 +508,7 @@ GameObject:
   - component: {fileID: 5849934836165590899}
   - component: {fileID: 8258785539723043405}
   m_Layer: 0
-  m_Name: Grapple
+  m_Name: GrappleTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

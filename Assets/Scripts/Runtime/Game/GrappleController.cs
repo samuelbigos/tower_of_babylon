@@ -68,6 +68,7 @@ public class GrappleController : MonoBehaviour
         if (release)
         {
             ReleaseGrapple();
+            Player.Instance.Controller.StopGrapple();
         }
 
         if (_grappleActive)
@@ -75,7 +76,7 @@ public class GrappleController : MonoBehaviour
             _grappleP1.position = transform.position;
             _grappleP2.position = transform.position;
 
-            Player.Instance.Controller.ApplyGrapple(_grappleTarget);
+            Player.Instance.Controller.SetGrapple(_grappleTarget);
 
             _grappleTargetGO.transform.position = _grappleTarget;
         }
