@@ -7,9 +7,12 @@ using Utils;
 using Quaternion = UnityEngine.Quaternion;
 using Vector3 = UnityEngine.Vector3;
 
-public class GameStateIntro : IGameState
+public class GameStateIntro : MonoBehaviour, IGameState
 {
     private const float TRANSITION_TIME = 5.0f;
+    
+    [SerializeField] private Camera _targetCamera;
+    [SerializeField] private Camera _camera;
 
     public bool IntroComplete => _canExit;
     
@@ -20,16 +23,11 @@ public class GameStateIntro : IGameState
     private bool _canExit;
     private bool _speed;
 
-    private Camera _targetCamera;
-    private Camera _camera;
-
     public void OnEnter(IGameState prevState)
     {
-        _camera = Camera.main;
         _initialPosition = _camera.transform.position;
         _initialRotation = _camera.transform.rotation;
         
-        _targetCamera = Player.Instance.Camera;
         _camera.fieldOfView = _targetCamera.fieldOfView;
         _camera.nearClipPlane = _targetCamera.nearClipPlane;
         _camera.farClipPlane = _targetCamera.farClipPlane;
@@ -39,7 +37,7 @@ public class GameStateIntro : IGameState
     {
     }
     
-    public void Update()
+    public void ManualUpdate()
     {
         if (InputManager.Instance.PlayerShoot.action.WasPressedThisFrame() && !_canExit)
         {
@@ -67,7 +65,7 @@ public class GameStateIntro : IGameState
                 _transitioning = false;
                 _canExit = true;
                 
-                GameObject.Destroy(_camera);
+                _camera.gameObject.SetActive(false);
             }
         }
     }

@@ -4,24 +4,33 @@ using System.Collections.Generic;
 using nickmaltbie.OpenKCC.Utils;
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+public class CameraController : Singleton<CameraController>
 {
     [SerializeField] private float _cameraDistance = 20.0f;
     [SerializeField] private float _yOffset = 2.0f;
     
     private Camera _camera;
+
+    private float _playerDistanceMod = 1.0f;
     
     private void Awake()
     {
+        base.Awake();
+        
         _camera = GetComponent<Camera>();
     }
 
-    private void Update()
+    public void SetPlayerDistanceMod(float mod)
     {
-        Vector3 pos = Utilities.Flatten(Player.Instance.transform.position).normalized * (_cameraDistance + Utilities.TOWER_RADIUS);
+        _playerDistanceMod = mod;
+    }
+    
+    private void FixedUpdate()
+    {
+        Vector3 pos = Utilities.Flatten(Player.Instance.transform.position).normalized * (_cameraDistance + Game.TowerRadius);
         if (!Game.WrapAroundTower)
         {
-            pos = Player.Instance.transform.position - Vector3.forward * _cameraDistance;
+            pos = Player.Instance.transform.position - Vector3.forward * _cameraDistance * _playerDistanceMod;
         }
         
         pos.y = Player.Instance.transform.position.y + _yOffset;

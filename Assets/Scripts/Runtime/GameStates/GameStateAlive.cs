@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameStateAlive : IGameState
+public class GameStateAlive : MonoBehaviour, IGameState
 {
     private Player _player;
     
@@ -16,12 +16,13 @@ public class GameStateAlive : IGameState
     {
     }
     
-    public void Update()
+    public void ManualUpdate()
     {
     }
     
     public bool ShouldEnter(IGameState currentState)
     {
-        return GSM.Instance.CurrentState is GameStateIntro && (GSM.Instance.CurrentState as GameStateIntro).IntroComplete;
+        return GSM.Instance.CurrentState is GameStateIntro && (GSM.Instance.CurrentState as GameStateIntro).IntroComplete
+            || GSM.Instance.CurrentState is GameStateElevator && (GSM.Instance.CurrentState as GameStateElevator).ElevatorComplete;
     }
 }

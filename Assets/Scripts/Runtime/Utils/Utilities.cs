@@ -5,9 +5,6 @@ public static class Utilities
 {
     public static readonly System.Random RNG = new System.Random(0);
 
-    public static readonly float TOWER_RADIUS = 50.0f;
-    public static readonly float TOWER_CIRCUMFERENCE = 2.0f * Mathf.PI * TOWER_RADIUS;
-
     public enum PhysicsLayers
     {
         Default = 0,
@@ -24,15 +21,6 @@ public static class Utilities
     public const int PlayerCollisionMask = ~(1 << (int)PhysicsLayers.Player);
     public const int ShipCastCollisionMask = 1 << (int)PhysicsLayers.Ship;
     public const int EnemyCollisionMask = 1 << (int) PhysicsLayers.Enemy;
-
-    public static Vector3 ProjectOnTower(Vector3 point)
-    {
-        Vector3 pos = point;
-        pos.y = 0.0f;
-        pos = pos.normalized * Utilities.TOWER_RADIUS;
-        pos.y = point.y;
-        return pos;
-    }
 
     public static Vector3 Flatten(Vector3 vec)
     {

@@ -6,6 +6,6 @@ public interface IGameState
 {
     public void OnEnter(IGameState prevState);
     public void OnExit(IGameState newState);
-    public void Update();
+    public void ManualUpdate();
     public bool ShouldEnter(IGameState currentState);
 }

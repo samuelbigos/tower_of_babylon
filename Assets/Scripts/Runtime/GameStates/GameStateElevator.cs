@@ -2,8 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameStateLimbo : MonoBehaviour, IGameState
+public class GameStateElevator : MonoBehaviour, IGameState
 {
+    [SerializeField] private Elevator _elevator;
+    
+    private Player _player;
+
+    public bool ElevatorComplete => _elevator.Complete;
+    
     public void OnEnter(IGameState prevState)
     {
     }
@@ -18,6 +24,6 @@ public class GameStateLimbo : MonoBehaviour, IGameState
     
     public bool ShouldEnter(IGameState currentState)
     {
-        return false;
+        return GSM.Instance.CurrentState is GameStateAlive && Game.Instance.PlayerOnTopOfTower;
     }
 }

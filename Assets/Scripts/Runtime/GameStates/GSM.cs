@@ -8,16 +8,13 @@ public class GSM : Singleton<GSM>
     private IGameState _currentState;
     public IGameState CurrentState => _currentState;
 
-    private List<IGameState> _states;
+    private IGameState[] _states;
 
     protected override void Awake()
     {
         base.Awake();
         
-        _states = new List<IGameState>();
-        _states.Add(new GameStateIntro());
-        _states.Add(new GameStateLimbo());
-        _states.Add(new GameStateAlive());
+        _states = GetComponents<IGameState>();
     }
 
     public void ManualUpdate()
@@ -36,6 +33,6 @@ public class GSM : Singleton<GSM>
         }
         
         if (_currentState != null)
-            _currentState.Update();
+            _currentState.ManualUpdate();
     }
 }

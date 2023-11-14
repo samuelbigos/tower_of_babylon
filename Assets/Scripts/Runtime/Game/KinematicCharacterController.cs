@@ -36,7 +36,6 @@ namespace nickmaltbie.OpenKCC.Demo
         [SerializeField] private float moveSpeed = 5.0f;
         [SerializeField] private float anglePower = 0.5f;
         [SerializeField] private float verticalSnapDown = 0.45f;
-        [SerializeField] private Vector3 gravity = new Vector3(0, -20, 0);
         [SerializeField] private float groundDist = 0.01f;
         [SerializeField] private float maxWalkingAngle = 60f;
         [SerializeField] private float jumpVelocity = 5.0f;
@@ -63,14 +62,25 @@ namespace nickmaltbie.OpenKCC.Demo
         private CapsuleCollider capsuleCollider;
         private bool jumpInputPressed => jumpAction.action.IsPressed();// || shootAction.action.WasPressedThisFrame();
         private float _roofTimer;
+        private Collider _groundCollider;
 
         private Vector3 _grappleTarget;
         private bool _grappling;
         private Vector3 _steering;
+
+        public bool _allowDepthMovement;
+        public bool _disallowLeftMovement;
+
+        public Collider GroundCollider => _groundCollider;
         
         public void ZeroVelocity()
         {
             _velocity = Vector3.zero;
+        }
+
+        public void ApplyPositionDelta(Vector3 delta)
+        {
+            transform.position += delta;
         }
         
         private void Start()
@@ -132,7 +142,7 @@ namespace nickmaltbie.OpenKCC.Demo
 
                 // Gets the distance to the grapple point on 2D plane.
                 float angle = Mathf.Acos(Vector3.Dot(playerPosN, grapplePosN));
-                float distance = Utilities.TOWER_CIRCUMFERENCE * (angle / (2.0f * Mathf.PI));
+                float distance = Game.TowerCircumference * (angle / (2.0f * Mathf.PI));
 
                 grapplePosProjectedForward = playerPos + playerForward * distance;
                 grapplePosProjectedForward.y += (_grappleTarget - playerPos).y;
@@ -176,8 +186,17 @@ namespace nickmaltbie.OpenKCC.Demo
             {
                 playerMove.x = 0.0f;
             }
-            playerMove.y = 0.0f;
 
+            if (!_allowDepthMovement)
+            {
+                playerMove.y = 0.0f;
+            }
+
+            if (_disallowLeftMovement)
+            {
+                playerMove.x = Mathf.Clamp01(playerMove.x);
+            }
+            
             // If player is not allowed to move, stop player input
             if (PlayerInputUtils.playerMovementState == PlayerInputState.Deny)
             {
@@ -191,11 +210,13 @@ namespace nickmaltbie.OpenKCC.Demo
             (bool onGround, float groundAngle) = CheckGrounded(_velocity, out RaycastHit groundHit);
             bool falling = !(onGround && groundAngle <= maxWalkingAngle);
 
+            _groundCollider = onGround ? groundHit.collider : null;
+
             // If falling, increase falling speed, otherwise stop falling.
             if (falling)
             {
                 playerMove.x = 0.0f;
-                _velocity += gravity * Time.fixedDeltaTime;
+                _velocity += Physics.gravity * Time.fixedDeltaTime;
                 elapsedFalling += Time.fixedDeltaTime;
             }
             else
@@ -258,7 +279,7 @@ namespace nickmaltbie.OpenKCC.Demo
             // Lock position to given radius.
             if (Game.WrapAroundTower)
             {
-                transform.position = Utilities.ProjectOnTower(transform.position);
+                transform.position = Game.ProjectOnTower(transform.position);
             }
             
             // Attempt to move the player based on player movement
@@ -297,17 +318,6 @@ namespace nickmaltbie.OpenKCC.Demo
             bool onGround = CastSelf(transform.position, transform.rotation, Vector3.down, groundDist, out groundHit);
             float angle = Vector3.Angle(groundHit.normal, Vector3.up);
             return (onGround, angle);
-        }
-        
-        private (bool, float) CheckRoofed(Vector3 velocity, out RaycastHit roofHit)
-        {
-            roofHit = new RaycastHit();
-            if (Vector3.Dot(velocity.normalized, Vector3.down) > 0.0f)
-                return (false, 0.0f);
-            
-            bool onRoof = CastSelf(transform.position, transform.rotation, Vector3.up, groundDist, out roofHit);
-            float angle = Vector3.Angle(roofHit.normal, Vector3.down);
-            return (onRoof, angle);
         }
 
         /// <summary>

@@ -49,6 +49,13 @@ public class GrappleController : MonoBehaviour
     {
         if (GSM.Instance.CurrentState is not GameStateAlive)
             return;
+
+        if (!Game.Instance.ShouldGrapple)
+        {
+            if (_grappleActive)
+                ReleaseGrapple();
+            return;
+        }
         
         bool shoot = _shootThisFrame;
         bool release = _releaseThisFrame;
@@ -71,7 +78,7 @@ public class GrappleController : MonoBehaviour
         else
         {
             mouseWorld = _camera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, (transform.position - _camera.transform.position).magnitude));
-            mouseWorld = Utilities.ProjectOnTower(mouseWorld);
+            mouseWorld = Game.ProjectOnTower(mouseWorld);
         }
         
         const int mask = 1 << (int) Utilities.PhysicsLayers.Grapple;
@@ -79,7 +86,7 @@ public class GrappleController : MonoBehaviour
         _grappleTargetGO.SetActive(didHit);
         if (didHit)
         {
-            Vector3 grapplePoint = Game.WrapAroundTower ? Utilities.ProjectOnTower(hit.point) : hit.point;
+            Vector3 grapplePoint = Game.WrapAroundTower ? Game.ProjectOnTower(hit.point) : hit.point;
             _grappleTargetGO.transform.position = grapplePoint;
             
             if (shoot)
@@ -106,7 +113,7 @@ public class GrappleController : MonoBehaviour
                 if (didHit)
                 {
                     // Modify the existing section.
-                    Vector3 perp = Game.WrapAroundTower ? Utilities.ProjectOnTower(hit.point).normalized : Vector3.back;
+                    Vector3 perp = Game.WrapAroundTower ? Game.ProjectOnTower(hit.point).normalized : Vector3.back;
                     Vector3 collideNormal = Vector3.Cross(perp, (_grappleSections[^1].Base - hit.point).normalized);
                     
                     if (Vector3.Dot(hit.normal, collideNormal) <= 0.0f) 
