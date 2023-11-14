@@ -134,7 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0509d192f59f72e47a51c3ca3c47b9a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Controller: {fileID: 0}
+  _camera: {fileID: 0}
 --- !u!114 &8685222311925321781
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -231,10 +231,9 @@ MonoBehaviour:
   jumpAction: {fileID: -4641586266295829472, guid: 18b4a476c7881a44bad6be9c4b08cd5d, type: 3}
   shootAction: {fileID: 5380609377248854564, guid: 18b4a476c7881a44bad6be9c4b08cd5d, type: 3}
   maxBounces: 5
-  moveSpeed: 10
+  moveSpeed: 20
   anglePower: 0.5
   verticalSnapDown: 0.45
-  gravity: {x: 0, y: -20, z: 0}
   groundDist: 0.01
   maxWalkingAngle: 60
   jumpVelocity: 10
@@ -249,6 +248,8 @@ MonoBehaviour:
   _maxForce: 1
   _bounceGrapple: 0.75
   _bounce: 0.25
+  _allowDepthMovement: 0
+  _disallowLeftMovement: 0
 --- !u!114 &6933811545299948337
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -264,6 +265,7 @@ MonoBehaviour:
   _grappleVFXPrefab: {fileID: 3047549062719799391, guid: 0b6303d5ca874124d934dab3fe3bb580, type: 3}
   _grappleTargetGO: {fileID: 2357654841458158440}
   _grappleCollisionBuffer: 0.005
+  _camera: {fileID: 0}
   shootGrapple: {fileID: 5380609377248854564, guid: 18b4a476c7881a44bad6be9c4b08cd5d, type: 3}
 --- !u!1 &5414737949719920315
 GameObject:

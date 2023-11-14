@@ -7,6 +7,8 @@ using Utils;
 
 public class Game : Singleton<Game>
 {
+    [SerializeField] private bool _gymMode;
+    
     [SerializeField] private Player _player;
     [SerializeField] private bool _wrapAroundTower = true;
     [SerializeField] private float _defaultTowerRadius = 50.0f;
@@ -39,6 +41,7 @@ public class Game : Singleton<Game>
     private float _angle;
 
     public bool ShouldGrapple = true;
+    public bool InGym => _gymMode;
 
     public static float TowerRadius => Instance._towerRadius;
     public static float TowerCircumference => Instance._towerRadius * Mathf.PI * 2.0f;
@@ -64,6 +67,9 @@ public class Game : Singleton<Game>
     {
         GSM.Instance.ManualUpdate();
 
+        if (_gymMode)
+            return;
+        
         if (!PlayerOnTopOfTower)
         {
             float tipBottom = _tipVolume.transform.position.y - _tipVolume.size.y * 0.5f;

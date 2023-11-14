@@ -868,50 +868,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 586899588}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &668482645 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4592592459422296609, guid: a775833a00ad6b24ba5ef29fee53106c, type: 3}
-  m_PrefabInstance: {fileID: 4166693672254857803}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &668482650
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 668482645}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ecd4ef426c6a56c42b436deee2fbd2e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _elevator: {fileID: 1919965201}
---- !u!114 &668482651
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 668482645}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7cdc9d6f28f3fdf4c860fe2f3a80c5f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &668482652
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 668482645}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5cda95bad8967c64bbc3c7c1a2f9fac1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _targetCamera: {fileID: 8170069693737125776}
-  _camera: {fileID: 2024948251}
 --- !u!108 &705507994 stripped
 Light:
   m_CorrespondingSourceObject: {fileID: 8373204935401335893, guid: 9619073ecbabc5d4187b87b8ddf5cd87, type: 3}
@@ -1938,18 +1894,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2532936627291263679, guid: 9619073ecbabc5d4187b87b8ddf5cd87, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 39.3527
-      objectReference: {fileID: 0}
-    - target: {fileID: 2532936627291263679, guid: 9619073ecbabc5d4187b87b8ddf5cd87, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 24.680725
-      objectReference: {fileID: 0}
-    - target: {fileID: 2532936627291263679, guid: 9619073ecbabc5d4187b87b8ddf5cd87, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -366.12555
-      objectReference: {fileID: 0}
     - target: {fileID: 5037289668555243297, guid: 9619073ecbabc5d4187b87b8ddf5cd87, type: 3}
       propertyPath: m_Name
       value: Graphics
@@ -2019,18 +1963,6 @@ PrefabInstance:
       propertyPath: _camera
       value: 
       objectReference: {fileID: 8170069693737125776}
-    - target: {fileID: 7790103595958853031, guid: d49eb9f7a49ddca408d56b1e8362774c, type: 3}
-      propertyPath: moveSpeed
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 7790103595958853031, guid: d49eb9f7a49ddca408d56b1e8362774c, type: 3}
-      propertyPath: jumpVelocity
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 7790103595958853031, guid: d49eb9f7a49ddca408d56b1e8362774c, type: 3}
-      propertyPath: maxWalkingAngle
-      value: 60
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2044,6 +1976,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 448736308791359402, guid: a775833a00ad6b24ba5ef29fee53106c, type: 3}
+      propertyPath: _elevator
+      value: 
+      objectReference: {fileID: 1919965201}
+    - target: {fileID: 1730078365148849993, guid: a775833a00ad6b24ba5ef29fee53106c, type: 3}
+      propertyPath: _camera
+      value: 
+      objectReference: {fileID: 2024948251}
+    - target: {fileID: 1730078365148849993, guid: a775833a00ad6b24ba5ef29fee53106c, type: 3}
+      propertyPath: _targetCamera
+      value: 
+      objectReference: {fileID: 8170069693737125776}
     - target: {fileID: 4592592459422296609, guid: a775833a00ad6b24ba5ef29fee53106c, type: 3}
       propertyPath: m_Name
       value: Game
@@ -2085,25 +2029,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 443696534}
     - target: {fileID: 5524593878187107978, guid: a775833a00ad6b24ba5ef29fee53106c, type: 3}
-      propertyPath: _tipTowerRadius
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 5524593878187107978, guid: a775833a00ad6b24ba5ef29fee53106c, type: 3}
-      propertyPath: _wrapAroundTower
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5524593878187107978, guid: a775833a00ad6b24ba5ef29fee53106c, type: 3}
-      propertyPath: PlayerOnTopOfTower
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5524593878187107978, guid: a775833a00ad6b24ba5ef29fee53106c, type: 3}
       propertyPath: _towerBottomVolume
       value: 
       objectReference: {fileID: 886673277}
-    - target: {fileID: 5524593878187107978, guid: a775833a00ad6b24ba5ef29fee53106c, type: 3}
-      propertyPath: _defaultTowerRadius
-      value: 50
-      objectReference: {fileID: 0}
     - target: {fileID: 9222287547179043879, guid: a775833a00ad6b24ba5ef29fee53106c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2147,16 +2075,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4592592459422296609, guid: a775833a00ad6b24ba5ef29fee53106c, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 668482652}
-    - targetCorrespondingSourceObject: {fileID: 4592592459422296609, guid: a775833a00ad6b24ba5ef29fee53106c, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 668482651}
-    - targetCorrespondingSourceObject: {fileID: 4592592459422296609, guid: a775833a00ad6b24ba5ef29fee53106c, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 668482650}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a775833a00ad6b24ba5ef29fee53106c, type: 3}
 --- !u!1001 &4168117238923470241
 PrefabInstance:
@@ -2515,14 +2434,6 @@ PrefabInstance:
     - target: {fileID: 65985835304827500, guid: d68ddf901f5edbd4aa7907b81510a8e0, type: 3}
       propertyPath: m_Name
       value: PlayerCamera
-      objectReference: {fileID: 0}
-    - target: {fileID: 65985835304827500, guid: d68ddf901f5edbd4aa7907b81510a8e0, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3552914046749011615, guid: d68ddf901f5edbd4aa7907b81510a8e0, type: 3}
-      propertyPath: near clip plane
-      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5549085251878889818, guid: d68ddf901f5edbd4aa7907b81510a8e0, type: 3}
       propertyPath: m_LocalPosition.x
