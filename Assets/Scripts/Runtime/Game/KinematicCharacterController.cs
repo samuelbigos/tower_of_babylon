@@ -67,8 +67,11 @@ namespace nickmaltbie.OpenKCC.Demo
         private Vector3 _grappleTarget;
         private bool _grappling;
         private Vector3 _steering;
-
-        public Vector3 Velocity => _velocity;
+        
+        public void ZeroVelocity()
+        {
+            _velocity = Vector3.zero;
+        }
         
         private void Start()
         {
@@ -158,8 +161,8 @@ namespace nickmaltbie.OpenKCC.Demo
             _steering = Limit(desiredVelocity - _velocity, _maxForce);
             _velocity += _steering;
         }
-        
-        private void FixedUpdate()
+
+        public void ManualFixedUpdate()
         {
             if (_grappling)
             {

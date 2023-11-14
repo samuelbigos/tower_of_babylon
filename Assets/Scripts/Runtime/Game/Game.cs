@@ -9,4 +9,9 @@ public class Game : Singleton<Game>
     [SerializeField] private bool _wrapAroundTower = true;
 
     public static bool WrapAroundTower => Instance._wrapAroundTower;
+
+    private void Update()
+    {
+        GSM.Instance.ManualUpdate();
+    }
 }

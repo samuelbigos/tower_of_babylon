@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using ImGuiNET;
 using UImGui;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
+using Vector3 = UnityEngine.Vector3;
 
 public class DebugImGui : Singleton<DebugImGui>, Input.IDebugActions
 {
@@ -122,6 +124,19 @@ public class DebugImGui : Singleton<DebugImGui>, Input.IDebugActions
 
     private void LayoutDebugMenu()
     {
+        if (ImGui.Button("^ Debug Ascend"))
+        {
+            Player.Instance.transform.position += Vector3.up * 25.0f;
+            Player.Instance.Controller.ZeroVelocity();
+        }
+        
+        if (ImGui.Button("v Debug Descend"))
+        {
+            Vector3 pos = Player.Instance.transform.position;
+            pos -= new Vector3(0.0f, Mathf.Min(25.0f, pos.y));
+            Player.Instance.transform.position = pos;
+            Player.Instance.Controller.ZeroVelocity();
+        }
     }
 
     public void RegisterWindow(string id, string name, Action callback, string inputActionName)

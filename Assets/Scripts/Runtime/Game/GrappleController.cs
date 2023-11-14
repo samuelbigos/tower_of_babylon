@@ -9,6 +9,7 @@ public class GrappleController : MonoBehaviour
     [SerializeField] private GrappleVFX _grappleVFXPrefab;
     [SerializeField] private GameObject _grappleTargetGO;
     [SerializeField] private float _grappleCollisionBuffer = 0.005f;
+    [SerializeField] private Camera _camera;
     
     public InputActionReference shootGrapple;
 
@@ -46,20 +47,22 @@ public class GrappleController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (GSM.Instance.CurrentState is not GameStateAlive)
+            return;
+        
         bool shoot = _shootThisFrame;
         bool release = _releaseThisFrame;
         _shootThisFrame = false;
         _releaseThisFrame = false;
 
         // Grapple target preview
-        Camera cam = Camera.main;
         Vector2 mousePos = Mouse.current.position.ReadValue();
         Vector3 mouseWorld = Vector3.one;
 
         if (!Game.WrapAroundTower)
         {
             Plane plane = new Plane(Vector3.forward, Vector3.zero);
-            Ray ray = cam.ScreenPointToRay(mousePos);
+            Ray ray = _camera.ScreenPointToRay(mousePos);
             if (plane.Raycast(ray, out float dist))
             {
                 mouseWorld = ray.GetPoint(dist);
@@ -67,7 +70,7 @@ public class GrappleController : MonoBehaviour
         }
         else
         {
-            mouseWorld = cam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, (transform.position - cam.transform.position).magnitude));
+            mouseWorld = _camera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, (transform.position - _camera.transform.position).magnitude));
             mouseWorld = Utilities.ProjectOnTower(mouseWorld);
         }
         

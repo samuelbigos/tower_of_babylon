@@ -7,9 +7,11 @@ using Vector3 = UnityEngine.Vector3;
 
 public class Player : Singleton<Player>
 {
-    public KinematicCharacterController Controller;
+    private KinematicCharacterController _controller;
+    public KinematicCharacterController Controller => _controller;
+    public Camera Camera => _camera;
     
-    private Camera _camera;
+    [SerializeField] private Camera _camera;
     private PlayerInput _input;
 
     private bool _prevOverUi;
@@ -21,10 +23,8 @@ public class Player : Singleton<Player>
     {
         base.Awake();
         
-        _camera = Camera.main;
-
         _input = GetComponent<PlayerInput>();
-        Controller = GetComponent<KinematicCharacterController>();
+        _controller = GetComponent<KinematicCharacterController>();
     }
 
     private void Start()
@@ -39,8 +39,19 @@ public class Player : Singleton<Player>
         base.OnDestroy();
     }
 
+    private void FixedUpdate()
+    {
+        if (GSM.Instance.CurrentState is not GameStateAlive)
+            return;
+        
+        _controller.ManualFixedUpdate();
+    }
+
     private void Update()
     {
+        if (GSM.Instance.CurrentState is not GameStateAlive)
+            return;
+        
         // Disable player input if mouse over ImGui elements.
         ImGuiIOPtr io = ImGui.GetIO();
         if (io.WantCaptureMouse && !_prevOverUi)
