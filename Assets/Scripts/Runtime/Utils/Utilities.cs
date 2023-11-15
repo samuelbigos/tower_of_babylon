@@ -13,14 +13,14 @@ public static class Utilities
         Player = 3,
         Water = 4,
         UI = 5,
-        Ship = 6,
-        Enemy = 7,
+        KillZone = 6,
+        Blocker = 7,
         Grapple = 8,
     }
-    
-    public const int PlayerCollisionMask = ~(1 << (int)PhysicsLayers.Player);
-    public const int ShipCastCollisionMask = 1 << (int)PhysicsLayers.Ship;
-    public const int EnemyCollisionMask = 1 << (int) PhysicsLayers.Enemy;
+
+    public const int KillZoneCollisionMask = 1 << (int)PhysicsLayers.KillZone;
+    public const int BlockerCollisionMask = 1 << (int)PhysicsLayers.Blocker;
+    public const int GrappleCollisionMask = 1 << (int)PhysicsLayers.Grapple;
 
     public static Vector3 Flatten(Vector3 vec)
     {

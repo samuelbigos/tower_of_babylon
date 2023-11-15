@@ -3,6 +3,8 @@ using ImGuiNET;
 using nickmaltbie.OpenKCC.Demo;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+using Scene = UnityEditor.SearchService.Scene;
 using Vector3 = UnityEngine.Vector3;
 
 public class Player : Singleton<Player>
@@ -69,5 +71,13 @@ public class Player : Singleton<Player>
     public void Teleport(Vector3 position)
     {
         transform.position = position;
+    }
+    
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.layer == (int)Utilities.PhysicsLayers.KillZone)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 }

@@ -6,6 +6,8 @@ using UnityEngine.InputSystem;
 
 public class GrappleController : MonoBehaviour
 {
+    [SerializeField] private float _grappleLength = 25.0f;
+    
     [SerializeField] private GrappleVFX _grappleVFXPrefab;
     [SerializeField] private GameObject _grappleTargetGO;
     [SerializeField] private float _grappleCollisionBuffer = 0.005f;
@@ -81,8 +83,12 @@ public class GrappleController : MonoBehaviour
             mouseWorld = Game.ProjectOnTower(mouseWorld);
         }
         
-        const int mask = 1 << (int) Utilities.PhysicsLayers.Grapple;
-        bool didHit = Physics.Raycast(transform.position, (mouseWorld - transform.position).normalized, out RaycastHit hit, 100.0f, mask);
+        const int mask = Utilities.GrappleCollisionMask | Utilities.BlockerCollisionMask;
+        bool didHit = Physics.Raycast(transform.position, (mouseWorld - transform.position).normalized, out RaycastHit hit, _grappleLength, mask);
+        if (didHit && hit.collider.gameObject.layer == (int)Utilities.PhysicsLayers.Blocker)
+        {
+            didHit = false;
+        }
         _grappleTargetGO.SetActive(didHit);
         if (didHit)
         {
