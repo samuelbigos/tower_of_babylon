@@ -16,10 +16,12 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using nickmaltbie.OpenKCC.Character;
 using nickmaltbie.OpenKCC.Utils;
+using UnityEditor.Android;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -28,6 +30,8 @@ namespace nickmaltbie.OpenKCC.Demo
     [RequireComponent(typeof(CapsuleCollider))]
     public class KinematicCharacterController : MonoBehaviour
     {
+        [SerializeField] private Animator _animator;
+    
         [SerializeField] private InputActionReference movePlayer;
         [SerializeField] private InputActionReference jumpAction;
         [SerializeField] private InputActionReference shootAction;
@@ -67,6 +71,7 @@ namespace nickmaltbie.OpenKCC.Demo
         private Vector3 _grappleTarget;
         private bool _grappling;
         private Vector3 _steering;
+        private bool _falling;
 
         public bool _allowDepthMovement;
         public bool _disallowLeftMovement;
@@ -208,16 +213,28 @@ namespace nickmaltbie.OpenKCC.Demo
 
             // Check if the player is falling
             (bool onGround, float groundAngle) = CheckGrounded(_velocity, out RaycastHit groundHit);
-            bool falling = !(onGround && groundAngle <= maxWalkingAngle);
+            _falling = !(onGround && groundAngle <= maxWalkingAngle);
 
             _groundCollider = onGround ? groundHit.collider : null;
 
             // If falling, increase falling speed, otherwise stop falling.
-            if (falling)
+            if (_falling)
             {
                 playerMove.x = 0.0f;
                 _velocity += Physics.gravity * Time.fixedDeltaTime;
                 elapsedFalling += Time.fixedDeltaTime;
+                
+                // Re-project velocity onto the tower. Quick dirty way to make sure we don't retard speed when falling around
+                // the tower.
+                if (Game.WrapAroundTower)
+                {
+                    if (!Mathf.Approximately(_velocity.magnitude, 0.0f))
+                    {
+                        Vector3 reprojectionPoint = transform.position + _velocity.normalized * 1.0f;
+                        reprojectionPoint = Game.ProjectOnTower(reprojectionPoint);
+                        _velocity = (reprojectionPoint - transform.position).normalized * _velocity.magnitude;
+                    }
+                }
             }
             else
             {
@@ -240,7 +257,7 @@ namespace nickmaltbie.OpenKCC.Demo
             bool canJump = (onGround || elapsedFalling <= coyoteTime) &&
                 groundAngle <= maxJumpAngle &&
                 timeSinceLastJump >= jumpCooldown &&
-                (!falling || notSlidingSinceJump);
+                (!_falling || notSlidingSinceJump);
 
             // Read player input movement
             var inputVector = new Vector3(playerMove.x, 0, playerMove.y);
@@ -253,7 +270,7 @@ namespace nickmaltbie.OpenKCC.Demo
             // Have player jump if they can jump and are attempting to jump
             if (canJump && attemptingJump)
             {
-                _velocity = Vector3.Lerp(Vector3.up + new Vector3(normalizedInput.x, 0.0f, 0.0f), groundHit.normal, jumpAngleWeightFactor) * jumpVelocity;
+                _velocity += Vector3.up * jumpVelocity;
                 timeSinceLastJump = 0.0f;
                 jumpInputElapsed = Mathf.Infinity;
 
@@ -271,7 +288,7 @@ namespace nickmaltbie.OpenKCC.Demo
 
             // If the player is standing on the ground, project their movement onto that plane
             // This allows for walking down slopes smoothly.
-            if (!falling)
+            if (!_falling)
             {
                 movement = Vector3.ProjectOnPlane(movement, groundHit.normal);
             }
@@ -285,11 +302,11 @@ namespace nickmaltbie.OpenKCC.Demo
             // Attempt to move the player based on player movement
             transform.position = MovePlayer(movement);
             
-            if (!falling && !attemptingJump)
+            if (!_falling && !attemptingJump)
             {
                 if (!Mathf.Approximately(playerMove.x, 0.0f))
                 {
-                    _velocity = movement;
+                    _velocity = movement / Time.fixedDeltaTime;
                 }
             }
 
@@ -301,7 +318,69 @@ namespace nickmaltbie.OpenKCC.Demo
             {
                 SnapPlayerDown();
             }
+            
+            // Point character in the correct direction.
+            Vector3 forward = Utilities.Flatten(_velocity);
+            if (!Mathf.Approximately(forward.magnitude, 0.0f))
+            {
+                if (_grappling)
+                {
+                    forward = Utilities.Flatten(_grappleTarget - transform.position).normalized;
+                    _animator.transform.forward = forward;
+                }
+                else
+                {
+                    _animator.transform.forward = forward;
+                }
+            }
+
+            UpdateAnimator();
         }
+
+        private void UpdateAnimator()
+        {
+            Vector3 forward = Utilities.Flatten(_velocity);
+            float movement = Vector3.Dot(forward, _velocity);
+            
+            _animator.SetBool("Jump", _falling);
+            _animator.SetFloat("Move", movement);
+            _animator.SetBool("Running", Mathf.Abs(movement) > 1.0f);
+            _animator.SetBool("Grappling", _grappling);
+        }
+
+        private void OnAnimatorIK(int layer)
+        {
+            // _animator.SetLookAtWeight(1);
+            // _animator.SetLookAtPosition(transform.position + Vector3.up * 10.0f);
+            //
+            // _animator.SetIKPositionWeight(AvatarIKGoal.RightHand,1);
+            // _animator.SetIKRotationWeight(AvatarIKGoal.RightHand,1);
+            
+            if(_grappling) 
+            {
+                //_animator.SetLookAtWeight(1.0f);
+                //_animator.SetLookAtPosition(_grappleTarget);
+                Vector3 handTarget = transform.position + (_grappleTarget - transform.position).normalized * 3.0f;
+                _animator.SetIKPositionWeight(AvatarIKGoal.RightHand,1);
+                _animator.SetIKPositionWeight(AvatarIKGoal.LeftHand,1);
+                _animator.SetIKPosition(AvatarIKGoal.RightHand, handTarget);
+                _animator.SetIKPosition(AvatarIKGoal.LeftHand, handTarget);
+                
+                Vector3 footTarget = transform.position - (_grappleTarget - transform.position).normalized * 5.0f;
+                _animator.SetIKPositionWeight(AvatarIKGoal.RightFoot,1);
+                _animator.SetIKPositionWeight(AvatarIKGoal.LeftFoot,1);
+                _animator.SetIKPosition(AvatarIKGoal.RightFoot, footTarget);
+                _animator.SetIKPosition(AvatarIKGoal.LeftFoot, footTarget);
+            
+            }
+            //if the IK is not active, set the position and rotation of the hand and head back to the original position
+            else 
+            {          
+                _animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 0);
+                _animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 0);
+                _animator.SetLookAtWeight(0);
+            }
+        }    
 
         /// <summary>
         /// Check if the player is standing on the ground.
@@ -311,10 +390,6 @@ namespace nickmaltbie.OpenKCC.Demo
         /// the ground, the float is the angle between the surface and the ground.</returns>
         private (bool, float) CheckGrounded(Vector3 velocity, out RaycastHit groundHit)
         {
-            groundHit = new RaycastHit();
-            if (Vector3.Dot(velocity.normalized, Vector3.up) > 0.5f)
-                return (false, 0.0f);
-            
             bool onGround = CastSelf(transform.position, transform.rotation, Vector3.down, groundDist, out groundHit);
             float angle = Vector3.Angle(groundHit.normal, Vector3.up);
             return (onGround, angle);
