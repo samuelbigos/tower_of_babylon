@@ -1,12 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Plane = UnityEngine.Plane;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
 public class GrappleController : MonoBehaviour
 {
     [SerializeField] private float _grappleLength = 25.0f;
+    [SerializeField] private float _grappleSpeed = 20.0f;
+    [SerializeField] private float _grappleHangTime = 1.0f;
     
     [SerializeField] private GrappleVFX _grappleVFXPrefab;
     [SerializeField] private GameObject _grappleTargetGO;
@@ -15,8 +21,6 @@ public class GrappleController : MonoBehaviour
     
     public InputActionReference shootGrapple;
 
-    private bool _grappleActive;
-
     private struct GrappleSection
     {
         public Vector3 Base;
@@ -24,12 +28,25 @@ public class GrappleController : MonoBehaviour
         public Vector3 CollideNormal;
     }
 
+    private enum GrappleState
+    {
+        Inactive,
+        Shooting,
+        Hooked,
+    }
+
+    const int GRAPPLE_MASK = Utilities.GrappleCollisionMask | Utilities.BlockerCollisionMask;
     private const int MAX_GRAPPLE_VFX = 100;
     private List<GrappleVFX> _grappleVFXs = new List<GrappleVFX>(MAX_GRAPPLE_VFX);
     private List<GrappleSection> _grappleSections = new List<GrappleSection>();
 
     private bool _shootThisFrame;
     private bool _releaseThisFrame;
+
+    private GrappleState _grappleState = GrappleState.Inactive;
+    private Vector2 _grappleAngle;
+    private float _grappleExtension;
+    private float _grappleHangTimer;
 
     private void Awake()
     {
@@ -54,16 +71,188 @@ public class GrappleController : MonoBehaviour
 
         if (!Game.Instance.ShouldGrapple)
         {
-            if (_grappleActive)
+            if (_grappleState != GrappleState.Inactive)
                 ReleaseGrapple();
             return;
         }
-        
-        bool shoot = _shootThisFrame;
-        bool release = _releaseThisFrame;
-        _shootThisFrame = false;
-        _releaseThisFrame = false;
 
+        switch (_grappleState)
+        {
+
+            case GrappleState.Inactive:
+                ProcessGrappleInactive();
+                break;
+            case GrappleState.Shooting:
+                ProcessGrappleShooting();
+                break;
+            case GrappleState.Hooked:
+                ProcessGrappleHooked();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        
+        for (int i = 0; i < _grappleVFXs.Count; i++)
+        {
+            if (i < _grappleSections.Count)
+            {
+                _grappleVFXs[i].On(_grappleSections[i].Tip, _grappleSections[i].Base);
+            }
+            else
+            {
+                _grappleVFXs[i].Off();
+            }
+        }
+
+        _releaseThisFrame = false;
+        _shootThisFrame = false;
+    }
+
+    private void ProcessGrappleInactive()
+    {
+        Vector3 dir = CalculateShootDirection();
+        bool didHit = CalculateGrappleHit(dir, 99999.0f, out RaycastHit hit);
+        _grappleTargetGO.SetActive(didHit);
+        //if (didHit)
+        {
+            Vector3 grapplePoint = Game.WrapAroundTower ? Game.ProjectOnTower(hit.point) : hit.point;
+            _grappleTargetGO.transform.position = grapplePoint;
+            
+            if (_shootThisFrame)
+            {
+                _shootThisFrame = false;
+                ShootGrapple();
+            }
+        }
+    }
+    
+    private void ProcessGrappleShooting()
+    {
+        if (_releaseThisFrame)
+        {
+            ReleaseGrapple();
+            return;
+        }
+
+        Vector3 dir = PlayerForward() * _grappleAngle.x + Vector3.up * _grappleAngle.y;
+        bool didHit = CalculateGrappleHit(dir, _grappleExtension, out RaycastHit hit);
+        if (didHit)
+        {
+            _grappleSections[^1] = new GrappleSection() { Tip = transform.position, Base = hit.point, CollideNormal = _grappleSections[^1].CollideNormal};
+            _grappleState = GrappleState.Hooked;
+            return;
+        }
+        
+        Vector3 shootPos = transform.position + dir * _grappleExtension;
+        _grappleSections[^1] = new GrappleSection() { Tip = transform.position, Base = shootPos, CollideNormal = _grappleSections[^1].CollideNormal};
+        
+        if (_grappleExtension > _grappleLength)
+        {
+            _grappleHangTimer += Time.deltaTime;
+            if (_grappleHangTimer > _grappleHangTime)
+            {
+                ReleaseGrapple();
+            }
+        }
+        else
+        {
+            _grappleExtension += _grappleSpeed * Time.deltaTime;
+        }
+    }
+    
+    private void ProcessGrappleHooked()
+    {
+        if (_releaseThisFrame)
+        {
+            ReleaseGrapple();
+            return;
+        }
+
+        _grappleSections[^1] = new GrappleSection() { Tip = transform.position, Base = _grappleSections[^1].Base, CollideNormal = _grappleSections[^1].CollideNormal};
+            
+        // Detect when a new grapple section needs to be made due to a grapple collision.
+        {
+            GrappleSection lastSection = _grappleSections[^1];
+            Vector3 dir = (lastSection.Base - lastSection.Tip).normalized;
+            float mag = (lastSection.Base - lastSection.Tip).magnitude;
+            bool didHit = Physics.Raycast(lastSection.Tip + dir * _grappleCollisionBuffer, dir, out RaycastHit hit, mag - _grappleCollisionBuffer * 2.0f, GRAPPLE_MASK);
+            if (didHit)
+            {
+                // Modify the existing section.
+                Vector3 perp = Game.WrapAroundTower ? Game.ProjectOnTower(hit.point).normalized : Vector3.back;
+                Vector3 collideNormal = Vector3.Cross(perp, (_grappleSections[^1].Base - hit.point).normalized);
+                
+                if (Vector3.Dot(hit.normal, collideNormal) <= 0.0f) 
+                    collideNormal = Vector3.Cross(-perp, (_grappleSections[^1].Base - hit.point).normalized);
+
+                _grappleSections[^1] = new GrappleSection() { Tip = hit.point, Base = _grappleSections[^1].Base, CollideNormal = collideNormal };
+                
+                // Add new section.
+                _grappleSections.Add(new GrappleSection() { Tip = transform.position, Base = hit.point });
+            }
+        }
+
+        // Detect when two grapple sections can be collapsed because there is no longer a collision between them.
+        if (_grappleSections.Count > 1)
+        {
+            GrappleSection farSection = _grappleSections[^2];
+            GrappleSection closeSection = _grappleSections[^1];
+            
+            Vector3 closeToFar = farSection.Base - closeSection.Tip;
+            
+            Vector3 dir = closeToFar.normalized;
+            float mag = closeToFar.magnitude;
+            bool didHit = Physics.Raycast(closeSection.Tip + dir * _grappleCollisionBuffer, dir, out RaycastHit hit, mag - _grappleCollisionBuffer * 2.0f, GRAPPLE_MASK);
+            
+            if (!didHit)
+            {
+                Vector3 tipDir = (closeSection.Tip - closeSection.Base).normalized;
+                if (Vector3.Dot(tipDir, farSection.CollideNormal) >= 0.0f)
+                {
+                    // Remove last section.
+                    _grappleSections.RemoveAt(_grappleSections.Count - 1);
+            
+                    // Expand new last section.
+                    _grappleSections[^1] = new GrappleSection() { Tip = closeSection.Tip, Base = farSection.Base, CollideNormal = farSection.CollideNormal};
+                }
+            }
+        }
+
+        Vector3 target = _grappleSections[^1].Base;
+        Player.Instance.Controller.SetGrapple(target);
+
+        _grappleTargetGO.transform.position = target;
+    }
+
+    private void ShootGrapple()
+    {
+        _grappleState = GrappleState.Shooting;
+        _grappleSections.Add(new GrappleSection() { Tip = transform.position, Base = transform.position});
+        _grappleTargetGO.SetActive(true);
+        _grappleExtension = 0.0f;
+        _grappleHangTimer = 0.0f;
+
+        Vector3 dir = CalculateShootDirection();
+        _grappleAngle.x = Vector3.Dot(dir, PlayerForward());
+        _grappleAngle.y = Vector3.Dot(dir, Vector3.up);
+    }
+
+    private void ReleaseGrapple()
+    {
+        for (int i = 0; i < _grappleVFXs.Count; i++)
+        {
+            _grappleVFXs[i].Off();
+        }
+
+        _grappleState = GrappleState.Inactive;
+        _grappleTargetGO.SetActive(false);
+        
+        Player.Instance.Controller.StopGrapple();
+        _grappleSections.Clear();
+    }
+
+    private Vector3 CalculateShootDirection()
+    {
         // Grapple target preview
         Vector2 mousePos = Mouse.current.position.ReadValue();
         Vector3 mouseWorld = Vector3.one;
@@ -82,121 +271,19 @@ public class GrappleController : MonoBehaviour
             mouseWorld = _camera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, (transform.position - _camera.transform.position).magnitude));
             mouseWorld = Game.ProjectOnTower(mouseWorld);
         }
-        
-        const int mask = Utilities.GrappleCollisionMask | Utilities.BlockerCollisionMask;
-        bool didHit = Physics.Raycast(transform.position, (mouseWorld - transform.position).normalized, out RaycastHit hit, _grappleLength, mask);
-        if (didHit && hit.collider.gameObject.layer == (int)Utilities.PhysicsLayers.Blocker)
-        {
-            didHit = false;
-        }
-        _grappleTargetGO.SetActive(didHit);
-        if (didHit)
-        {
-            Vector3 grapplePoint = Game.WrapAroundTower ? Game.ProjectOnTower(hit.point) : hit.point;
-            _grappleTargetGO.transform.position = grapplePoint;
-            
-            if (shoot)
-            {
-                ShootGrapple(hit);
-            }
-        }
-        
-        if (release)
-        {
-            ReleaseGrapple();
-        }
 
-        if (_grappleActive)
-        {
-            _grappleSections[^1] = new GrappleSection() { Tip = transform.position, Base = _grappleSections[^1].Base, CollideNormal = _grappleSections[^1].CollideNormal};
-            
-            // Detect when a new grapple section needs to be made due to a grapple collision.
-            {
-                GrappleSection lastSection = _grappleSections[^1];
-                Vector3 dir = (lastSection.Base - lastSection.Tip).normalized;
-                float mag = (lastSection.Base - lastSection.Tip).magnitude;
-                didHit = Physics.Raycast(lastSection.Tip + dir * _grappleCollisionBuffer, dir, out hit, mag - _grappleCollisionBuffer * 2.0f, mask);
-                if (didHit)
-                {
-                    // Modify the existing section.
-                    Vector3 perp = Game.WrapAroundTower ? Game.ProjectOnTower(hit.point).normalized : Vector3.back;
-                    Vector3 collideNormal = Vector3.Cross(perp, (_grappleSections[^1].Base - hit.point).normalized);
-                    
-                    if (Vector3.Dot(hit.normal, collideNormal) <= 0.0f) 
-                        collideNormal = Vector3.Cross(-perp, (_grappleSections[^1].Base - hit.point).normalized);
-                    
-                    //DebugSphere.Instance.transform.position = hit.point + collideNormal;
-                    
-                    _grappleSections[^1] = new GrappleSection() { Tip = hit.point, Base = _grappleSections[^1].Base, CollideNormal = collideNormal };
-                    
-                    // Add new section.
-                    _grappleSections.Add(new GrappleSection() { Tip = transform.position, Base = hit.point });
-                }
-            }
-
-            // Detect when two grapple sections can be collapsed because there is no longer a collision between them.
-            if (_grappleSections.Count > 1)
-            {
-                GrappleSection farSection = _grappleSections[^2];
-                GrappleSection closeSection = _grappleSections[^1];
-                
-                Vector3 closeToFar = farSection.Base - closeSection.Tip;
-                
-                Vector3 dir = closeToFar.normalized;
-                float mag = closeToFar.magnitude;
-                didHit = Physics.Raycast(closeSection.Tip + dir * _grappleCollisionBuffer, dir, out hit, mag - _grappleCollisionBuffer * 2.0f, mask);
-                
-                if (!didHit)
-                {
-                    Vector3 tipDir = (closeSection.Tip - closeSection.Base).normalized;
-                    if (Vector3.Dot(tipDir, farSection.CollideNormal) >= 0.0f)
-                    {
-                        // Remove last section.
-                        _grappleSections.RemoveAt(_grappleSections.Count - 1);
-                
-                        // Expand new last section.
-                        _grappleSections[^1] = new GrappleSection() { Tip = closeSection.Tip, Base = farSection.Base, CollideNormal = farSection.CollideNormal};
-                    }
-                }
-            }
-            
-            for (int i = 0; i < _grappleVFXs.Count; i++)
-            {
-                if (i < _grappleSections.Count)
-                {
-                    _grappleVFXs[i].On(_grappleSections[i].Tip, _grappleSections[i].Base);
-                }
-                else
-                {
-                    _grappleVFXs[i].Off();
-                }
-            }
-
-            Vector3 target = _grappleSections[^1].Base;
-            Player.Instance.Controller.SetGrapple(target);
-
-            _grappleTargetGO.transform.position = target;
-        }
+        return (mouseWorld - transform.position).normalized;
     }
 
-    private void ShootGrapple(RaycastHit hit)
+    private bool CalculateGrappleHit(Vector3 dir, float dist, out RaycastHit hit)
     {
-        _grappleSections.Add(new GrappleSection() { Tip = transform.position, Base = hit.point});
-        _grappleActive = true;
-        _grappleTargetGO.SetActive(true);
+        bool didHit = Physics.Raycast(transform.position, dir, out hit, dist, GRAPPLE_MASK);
+        return didHit && hit.collider.gameObject.layer != (int)Utilities.PhysicsLayers.Blocker;
     }
 
-    private void ReleaseGrapple()
+    private Vector3 PlayerForward()
     {
-        for (int i = 0; i < _grappleVFXs.Count; i++)
-        {
-            _grappleVFXs[i].Off();
-        }
-
-        _grappleActive = false;
-        _grappleTargetGO.SetActive(false);
-        
-        Player.Instance.Controller.StopGrapple();
-        _grappleSections.Clear();
+        Vector3 playerPosN = Utilities.Flatten(transform.position).normalized;
+        return Vector3.Cross(playerPosN, Vector3.up);
     }
 }

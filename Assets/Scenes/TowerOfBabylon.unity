@@ -16271,6 +16271,14 @@ PrefabInstance:
       propertyPath: _camera
       value: 
       objectReference: {fileID: 8170069693737125776}
+    - target: {fileID: 7044397833536584903, guid: c47e6e45feccf3540ab7c97fbe7854bb, type: 3}
+      propertyPath: _grappleSpeed
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 7044397833536584903, guid: c47e6e45feccf3540ab7c97fbe7854bb, type: 3}
+      propertyPath: _grappleHangTime
+      value: 0.33
+      objectReference: {fileID: 0}
     - target: {fileID: 7686758295883092129, guid: c47e6e45feccf3540ab7c97fbe7854bb, type: 3}
       propertyPath: _camera
       value: 

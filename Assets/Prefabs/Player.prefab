@@ -1114,6 +1114,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _grappleLength: 25
+  _grappleSpeed: 200
+  _grappleHangTime: 0.33
   _grappleVFXPrefab: {fileID: 3047549062719799391, guid: 0b6303d5ca874124d934dab3fe3bb580, type: 3}
   _grappleTargetGO: {fileID: 4075009600998007237}
   _grappleCollisionBuffer: 0.005
