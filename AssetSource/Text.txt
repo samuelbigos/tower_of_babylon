@@ -1,0 +1,13 @@
+The tower became visible when I was still leagues away. Thin as a strand of linen dissolving into the heavens. <br> <sprite index=0>
+
+Nobody remembers for sure, why or how it was built. Or why it was subsequently abandoned. The fact it remains standing is testament to the skill of its builders. <br> <sprite index=0>
+
+They say it is impossible to see the top, even during a typical cloudless day on the plains of Shinar. <br> <sprite index=0>
+
+Many make the pilgrimage to the tower, in search of meaning. Enlightenment. God. Either they never return, or plummet to be swallowed by the sands below, never to tell their tale. <br> <sprite index=0>
+
+Myself? Every day I view the tower from my home in Elam, and every day I wonder more and more. My dearest Hillalum, if there is even the smallest chance we could be reunited... I know what I must do. <br> <sprite index=0>
+
+####
+
+Grapple: aim with <sprite assetName="T_Mouse_XY_Key_Dark" index=0> and hold <sprite index=0>

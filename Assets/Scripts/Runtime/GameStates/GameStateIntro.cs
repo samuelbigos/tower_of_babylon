@@ -12,6 +12,7 @@ public class GameStateIntro : MonoBehaviour, IGameState
     [SerializeField] private float _transitionTime = 5.0f;
     [SerializeField] private Camera _targetCamera;
     [SerializeField] private Camera _camera;
+    [SerializeField] private List<Transform> _introTransforms;
 
     public bool IntroComplete => _canExit;
     
@@ -21,12 +22,10 @@ public class GameStateIntro : MonoBehaviour, IGameState
     private Quaternion _initialRotation;
     private bool _canExit;
     private bool _speed;
+    private int _currentIntro;
 
     public void OnEnter(IGameState prevState)
     {
-        _initialPosition = _camera.transform.position;
-        _initialRotation = _camera.transform.rotation;
-        
         _camera.fieldOfView = _targetCamera.fieldOfView;
         _camera.nearClipPlane = _targetCamera.nearClipPlane;
         _camera.farClipPlane = _targetCamera.farClipPlane;
@@ -35,6 +34,11 @@ public class GameStateIntro : MonoBehaviour, IGameState
         {
             _timer = _transitionTime;
         }
+
+        _camera.transform.position = _introTransforms[0].position;
+        _camera.transform.rotation = _introTransforms[0].rotation;
+        _initialPosition = _camera.transform.position;
+        _initialRotation = _camera.transform.rotation;
     }
     
     public void OnExit(IGameState newState)
@@ -50,11 +54,15 @@ public class GameStateIntro : MonoBehaviour, IGameState
                 _speed = true;
             }
             _transitioning = true;
+            _currentIntro++;
+            _initialPosition = _camera.transform.position;
+            _initialRotation = _camera.transform.rotation;
+            _timer = 0.0f;
         }
 
         if (_transitioning)
         {
-            Transform targetTransform = _targetCamera.transform;
+            Transform targetTransform = _introTransforms[_currentIntro];
 
             _camera.transform.position = Vector3.Lerp(_initialPosition, targetTransform.position, T());
             _camera.transform.rotation = Quaternion.Slerp(_initialRotation, targetTransform.rotation, T());
@@ -67,9 +75,12 @@ public class GameStateIntro : MonoBehaviour, IGameState
                 _camera.transform.rotation = targetTransform.rotation;
 
                 _transitioning = false;
-                _canExit = true;
-                
-                _camera.gameObject.SetActive(false);
+
+                if (_currentIntro == _introTransforms.Count - 1)
+                {
+                    _canExit = true;
+                    _camera.gameObject.SetActive(false);
+                }
             }
         }
     }

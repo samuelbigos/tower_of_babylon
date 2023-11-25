@@ -13,7 +13,7 @@ public class CameraController : Singleton<CameraController>
 
     private float _playerDistanceMod = 1.0f;
     
-    private void Awake()
+    protected override void Awake()
     {
         base.Awake();
         

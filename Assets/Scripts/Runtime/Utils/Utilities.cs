@@ -16,6 +16,7 @@ public static class Utilities
         KillZone = 6,
         Blocker = 7,
         Grapple = 8,
+        Monument = 10,
     }
 
     public const int KillZoneCollisionMask = 1 << (int)PhysicsLayers.KillZone;
