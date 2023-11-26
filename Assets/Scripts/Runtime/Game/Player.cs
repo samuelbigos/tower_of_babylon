@@ -31,6 +31,8 @@ public class Player : Singleton<Player>
     private List<Monument> _visitedMonuments = new List<Monument>();
 
     public bool IsDead => _didDie;
+
+    private List<GameObject> _queueDestroy = new List<GameObject>();
     
     protected override void Awake()
     {
@@ -112,6 +114,12 @@ public class Player : Singleton<Player>
         _didDie = false;
         transform.position = _activeMonument.transform.position + Vector3.up * 5.0f;
         _bloodVfx.Stop();
+
+        foreach (GameObject toDestroy in _queueDestroy)
+        {
+            Destroy(toDestroy);
+        }
+        _queueDestroy.Clear();
     }
     
     private void OnTriggerEnter(Collider other)
@@ -122,6 +130,11 @@ public class Player : Singleton<Player>
         if (other.gameObject.layer == (int)Utilities.PhysicsLayers.KillZone)
         {
             Death();
+
+            if (other.gameObject.GetComponentInParent<Cannonball>())
+            {
+                _queueDestroy.Add(other.transform.parent.gameObject);
+            }
         }
 
         if (other.gameObject.layer == (int)Utilities.PhysicsLayers.Monument)
