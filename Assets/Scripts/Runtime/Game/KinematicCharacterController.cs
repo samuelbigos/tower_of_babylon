@@ -201,7 +201,7 @@ namespace nickmaltbie.OpenKCC.Demo
             }
             
             // If player is not allowed to move, stop player input
-            if (PlayerInputUtils.playerMovementState == PlayerInputState.Deny)
+            if (PlayerInputUtils.playerMovementState == PlayerInputState.Deny || Player.Instance.IsDead)
             {
                 playerMove = Vector2.zero;
             }
@@ -344,6 +344,7 @@ namespace nickmaltbie.OpenKCC.Demo
             _animator.SetFloat("Move", movement);
             _animator.SetBool("Running", Mathf.Abs(movement) > 1.0f);
             _animator.SetBool("Grappling", _grappling);
+            _animator.SetBool("Dead", Player.Instance.IsDead);
         }
 
         private void OnAnimatorIK(int layer)

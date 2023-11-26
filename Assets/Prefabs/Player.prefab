@@ -1133,6 +1133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0509d192f59f72e47a51c3ca3c47b9a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _respawnTime: 2
   _camera: {fileID: 0}
 --- !u!114 &7457914709234791558
 MonoBehaviour:

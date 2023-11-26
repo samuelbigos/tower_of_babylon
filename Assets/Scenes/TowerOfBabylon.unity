@@ -94,7 +94,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 112000000, guid: 2403913162de3794e886cae4f5833672, type: 2}
+  m_LightingDataAsset: {fileID: 112000000, guid: 828ba130592798746a189339f38997cf, type: 2}
   m_LightingSettings: {fileID: 4890085278179872738, guid: 754b87d7da8a6d546a9b4257aeca4d92, type: 2}
 --- !u!196 &4
 NavMeshSettings:
@@ -142,15 +142,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2b64d1f3b61be4d419ce5adaeaf7c4b8, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 30.8
+      value: -1.98
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2b64d1f3b61be4d419ce5adaeaf7c4b8, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.84
+      value: 20.74
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2b64d1f3b61be4d419ce5adaeaf7c4b8, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -39.3
+      value: -49.38
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2b64d1f3b61be4d419ce5adaeaf7c4b8, type: 3}
       propertyPath: m_LocalRotation.w
@@ -16149,6 +16149,7 @@ MonoBehaviour:
   - {fileID: 546781381}
   - {fileID: 535932322}
   - {fileID: 8170069693737125780}
+  _skipIntro: 0
 --- !u!4 &669872933 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5ea8b5c95de679141a9ba1f3607915ed, type: 3}
@@ -16489,16 +16490,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a83d2f7ae04ab6f4f99b0d85377be998, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  asset: {fileID: 11400000, guid: f4efc498128f3fa4cb230ab7ca8803b0, type: 2}
+  asset: {fileID: 11400000, guid: 123c1b640c11f22439133257ee628710, type: 2}
   sceneGUID: 9fc0d4010bbf28b4594072e72b8655ab
-  cellSharedDataAsset: {fileID: 4900000, guid: e7f569e8f38f2aa43acfeebecace8611, type: 3}
-  cellSupportDataAsset: {fileID: 4900000, guid: d22f2c27144b34e429ffe075007ee6a7, type: 3}
+  cellSharedDataAsset: {fileID: 4900000, guid: da9ac14668067e647822fc9b5f9f5ede, type: 3}
+  cellSupportDataAsset: {fileID: 4900000, guid: b829b2b792ef6d14299ca81f833db4f5, type: 3}
   serializedScenarios:
   - scenario: Default
     data:
-      sceneHash: 2065058465
-      cellDataAsset: {fileID: 4900000, guid: c1dcd08360581694faeb0c69cdb803c8, type: 3}
-      cellOptionalDataAsset: {fileID: 4900000, guid: e72681071e555d84d97be965c1d71aca, type: 3}
+      sceneHash: 142898464
+      cellDataAsset: {fileID: 4900000, guid: 2712a6effe990184d8c5680fd77e6f17, type: 3}
+      cellOptionalDataAsset: {fileID: 4900000, guid: f725f0723b18ff24f9a395deea1165ae, type: 3}
 --- !u!4 &873688347
 Transform:
   m_ObjectHideFlags: 1
@@ -16897,11 +16898,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5358490015197562109, guid: c47e6e45feccf3540ab7c97fbe7854bb, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -7.6
+      value: 5.05
       objectReference: {fileID: 0}
     - target: {fileID: 5358490015197562109, guid: c47e6e45feccf3540ab7c97fbe7854bb, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 7.2
+      value: 27.36
       objectReference: {fileID: 0}
     - target: {fileID: 5358490015197562109, guid: c47e6e45feccf3540ab7c97fbe7854bb, type: 3}
       propertyPath: m_LocalPosition.z
@@ -28768,7 +28769,6 @@ GameObject:
   - component: {fileID: 1884165018}
   - component: {fileID: 1884165017}
   - component: {fileID: 1884165016}
-  - component: {fileID: 1884165015}
   - component: {fileID: 1884165019}
   m_Layer: 6
   m_Name: Capsule
@@ -28777,29 +28777,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!136 &1884165015
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1884165014}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1884165016
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -30093,6 +30070,10 @@ PrefabInstance:
       propertyPath: _camera
       value: 
       objectReference: {fileID: 2024948251}
+    - target: {fileID: 1730078365148849993, guid: a775833a00ad6b24ba5ef29fee53106c, type: 3}
+      propertyPath: _skipIntro
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1730078365148849993, guid: a775833a00ad6b24ba5ef29fee53106c, type: 3}
       propertyPath: _targetCamera
       value: 

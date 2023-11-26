@@ -13,6 +13,7 @@ public class GameStateIntro : MonoBehaviour, IGameState
     [SerializeField] private Camera _targetCamera;
     [SerializeField] private Camera _camera;
     [SerializeField] private List<Transform> _introTransforms;
+    [SerializeField] private bool _skipIntro = false;
 
     public bool IntroComplete => _canExit;
     
@@ -39,6 +40,12 @@ public class GameStateIntro : MonoBehaviour, IGameState
         _camera.transform.rotation = _introTransforms[0].rotation;
         _initialPosition = _camera.transform.position;
         _initialRotation = _camera.transform.rotation;
+
+        if (_skipIntro)
+        {
+            _canExit = true;
+            _camera.gameObject.SetActive(false);
+        }
     }
     
     public void OnExit(IGameState newState)
@@ -49,10 +56,6 @@ public class GameStateIntro : MonoBehaviour, IGameState
     {
         if ((InputManager.Instance.PlayerShoot.action.WasPressedThisFrame() || Game.Instance.InGym) && !_canExit)
         {
-            if (_transitioning)
-            {
-                _speed = true;
-            }
             _transitioning = true;
             _currentIntro++;
             _initialPosition = _camera.transform.position;

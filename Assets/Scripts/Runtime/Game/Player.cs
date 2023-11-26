@@ -25,6 +25,8 @@ public class Player : Singleton<Player>
     private GameObject _activeMonument;
     private float _respawnTimer;
     private bool _didDie;
+
+    public bool IsDead => _didDie;
     
     protected override void Awake()
     {
