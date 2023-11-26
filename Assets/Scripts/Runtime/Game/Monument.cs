@@ -6,6 +6,9 @@ using UnityEngine;
 public class Monument : MonoBehaviour
 {
     [SerializeField] public string _text;
+    [SerializeField] private ParticleSystem _respawnPS;
+
+    private bool _isRespawnPoint;
     
     private void Start()
     {
@@ -15,16 +18,28 @@ public class Monument : MonoBehaviour
         collider.isTrigger = true;
 
         gameObject.layer = (int) Utilities.PhysicsLayers.Monument;
+        
+        _respawnPS.gameObject.SetActive(false);
     }
 
     public void OnActivate()
     {
-        Debug.Log("Activate");
+        //Debug.Log("Activate");
         UI.Instance.SetText(_text);
     }
 
     public void OnDeactivate()
     {
-        Debug.Log("Deactivate");
+        //Debug.Log("Deactivate");
+    }
+
+    public void SetRespawnPoint(bool isRespawn)
+    {
+        if (_isRespawnPoint != isRespawn)
+        {
+            _respawnPS.gameObject.SetActive(isRespawn);
+        }
+        _isRespawnPoint = isRespawn;
+        
     }
 }

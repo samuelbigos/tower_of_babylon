@@ -22,7 +22,15 @@ public class GameStateAlive : MonoBehaviour, IGameState
     
     public bool ShouldEnter(IGameState currentState)
     {
-        return GSM.Instance.CurrentState is GameStateIntro && (GSM.Instance.CurrentState as GameStateIntro).IntroComplete
-            || GSM.Instance.CurrentState is GameStateElevator && (GSM.Instance.CurrentState as GameStateElevator).ElevatorComplete;
+        if (GSM.Instance.CurrentState is GameStateIntro && (GSM.Instance.CurrentState as GameStateIntro).IntroComplete)
+            return true;
+
+        if (GSM.Instance.CurrentState is GameStateElevator && (GSM.Instance.CurrentState as GameStateElevator).ElevatorComplete)
+            return true;
+
+        if (GSM.Instance.CurrentState is GameStateDead && !Player.Instance.IsDead)
+            return true;
+        
+        return false;
     }
 }

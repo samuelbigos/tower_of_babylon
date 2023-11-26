@@ -16,11 +16,6 @@ public class Game : Singleton<Game>
 
     [SerializeField] private BoxCollider _tipVolume;
     [SerializeField] private BoxCollider _elevatorVolume;
-    [SerializeField] private BoxCollider _roofVolume;
-    [SerializeField] private BoxCollider _tunnelVolume;
-    [SerializeField] private BoxCollider _tunnelVolume2;
-    [SerializeField] private BoxCollider _teleportVolume;
-    [SerializeField] private BoxCollider _towerBottomVolume;
 
     [SerializeField] private Transform _tunnelTop;
     [SerializeField] private Transform _tunnelBot;
@@ -55,12 +50,6 @@ public class Game : Singleton<Game>
         base.Awake();
 
         _towerRadius = _defaultTowerRadius;
-    }
-
-    private bool InTunnelVolume()
-    {
-        return _tunnelVolume.bounds.Contains(_player.transform.position) ||
-               _tunnelVolume2.bounds.Contains(_player.transform.position);
     }
 
     private void Update()
@@ -114,52 +103,6 @@ public class Game : Singleton<Game>
             _playerInElevatorVolume = false;
             PlayerOnTopOfTower = false;
             _player.Controller._disallowLeftMovement = false;
-            ShouldGrapple = true;
-        }
-
-        if (!_playerInRoofVolume && _roofVolume.bounds.Contains(_player.transform.position))
-        {
-            _playerInRoofVolume = true;
-            _wrapAroundTower = false;
-        }
-        
-        if (!_playerInTunnelVolume && InTunnelVolume())
-        {
-            _playerInTunnelVolume = true;
-            _player.Controller._allowDepthMovement = true;
-            _playerZOnEnterTunnelVolume = _player.transform.position.z - _tunnelVolume.transform.position.z;
-        }
-
-        if (_playerInTunnelVolume && !InTunnelVolume())
-        {
-            _playerInTunnelVolume = false;
-            _player.Controller._allowDepthMovement = false;
-        }
-
-        if (_playerInTunnelVolume)
-        {
-            float mod = _player.transform.position.z - _tunnelVolume.transform.position.z - _playerZOnEnterTunnelVolume + _teleportZDelta;
-            mod /= 50.0f;
-            mod = Easing.InOut(Mathf.Clamp01(mod));
-            mod *= 0.75f;
-            mod = 1.0f - mod;
-            CameraController.Instance.SetPlayerDistanceMod(mod);
-            ShouldGrapple = false;
-        }
-
-        if (!_playerInTeleportVolume && _teleportVolume.bounds.Contains(_player.transform.position))
-        {
-            float zPrev = _player.transform.position.z;
-            Vector3 offset = _player.transform.position - _tunnelTop.transform.position;
-            _player.transform.position = _tunnelBot.position + offset;
-            _teleportZDelta = zPrev - _player.transform.position.z;
-        }
-        
-        if (!_playerInTowerBottomZone && _towerBottomVolume.bounds.Contains(_player.transform.position))
-        {
-            _playerInTowerBottomZone = true;
-            _wrapAroundTower = true;
-            _player.Controller._allowDepthMovement = false;
             ShouldGrapple = true;
         }
     }

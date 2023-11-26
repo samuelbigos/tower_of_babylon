@@ -67,7 +67,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 10
-  far clip plane: 1000
+  far clip plane: 5000
   field of view: 35
   orthographic: 0
   orthographic size: 5
@@ -117,7 +117,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -150,5 +150,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6a4a6831a9c77e42bf7389335c0af3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cameraDistance: 90
+  _cameraDistance: 75
   _yOffset: 2

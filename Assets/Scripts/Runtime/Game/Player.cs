@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ImGuiNET;
 using nickmaltbie.OpenKCC.Demo;
 using UnityEngine;
@@ -24,9 +25,10 @@ public class Player : Singleton<Player>
     public static Action<Player> OnPlayerCreated;
     public static Action<Player> OnPlayerDestroyed;
 
-    private GameObject _activeMonument;
+    private Monument _activeMonument;
     private float _respawnTimer;
     private bool _didDie;
+    private List<Monument> _visitedMonuments = new List<Monument>();
 
     public bool IsDead => _didDie;
     
@@ -52,17 +54,14 @@ public class Player : Singleton<Player>
 
     private void FixedUpdate()
     {
-        if (GSM.Instance.CurrentState is not GameStateAlive)
-            return;
-        
-        _controller.ManualFixedUpdate();
+        if (GSM.Instance.CurrentState is GameStateAlive || GSM.Instance.CurrentState is GameStateDead)
+        {
+            _controller.ManualFixedUpdate();
+        }
     }
 
     private void Update()
     {
-        if (GSM.Instance.CurrentState is not GameStateAlive)
-            return;
-        
         // Disable player input if mouse over ImGui elements.
         ImGuiIOPtr io = ImGui.GetIO();
         if (io.WantCaptureMouse && !_prevOverUi)
@@ -75,11 +74,18 @@ public class Player : Singleton<Player>
             _input.ActivateInput();
             _prevOverUi = false;
         }
-
-        _respawnTime -= Time.deltaTime;
-        if (_didDie && _respawnTime < 0.0f)
+        
+        if (GSM.Instance.CurrentState is GameStateDead)
         {
-            Respawn();
+            _respawnTime -= Time.deltaTime;
+            if (_didDie && _respawnTime < 0.0f)
+            {
+                Respawn();
+            }
+        }
+
+        if (GSM.Instance.CurrentState is GameStateAlive)
+        {
         }
     }
 
@@ -122,8 +128,17 @@ public class Player : Singleton<Player>
         {
             Monument monument = other.gameObject.GetComponent<Monument>();
             monument.OnActivate();
-            _activeMonument = monument.gameObject;
+            if (_activeMonument)
+                _activeMonument.SetRespawnPoint(false);
+            _activeMonument = monument;
+            _activeMonument.SetRespawnPoint(true);
             UI.Instance.EnterCinematic();
+
+            if (!_visitedMonuments.Contains(monument))
+            {
+                _visitedMonuments.Add(monument);
+                Scarf.Instance.Upgrade();
+            }
         }
     }
 

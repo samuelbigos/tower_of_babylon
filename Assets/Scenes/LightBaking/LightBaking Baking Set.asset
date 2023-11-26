@@ -17,7 +17,7 @@ MonoBehaviour:
     m_Version: 1
     dilationSettings:
       enableDilation: 1
-      dilationDistance: 1
+      dilationDistance: 10
       dilationValidityThreshold: 0.25
       dilationIterations: 1
       squaredDistWeighting: 1
@@ -38,7 +38,7 @@ MonoBehaviour:
   version: 0
   freezePlacement: 0
   simplificationLevels: 3
-  minDistanceBetweenProbes: 1
+  minDistanceBetweenProbes: 10
   renderersLayerMask:
     serializedVersion: 2
     m_Bits: 4294967295

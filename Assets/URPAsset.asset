@@ -19,7 +19,7 @@ MonoBehaviour:
   m_RendererDataList:
   - {fileID: 11400000, guid: c80d0585b85aa3b4f8ab374a38ba42f3, type: 2}
   m_DefaultRendererIndex: 0
-  m_RequireDepthTexture: 0
+  m_RequireDepthTexture: 1
   m_RequireOpaqueTexture: 0
   m_OpaqueDownsampling: 1
   m_SupportsTerrainHoles: 1
@@ -100,8 +100,12 @@ MonoBehaviour:
         m_Extent: {x: NaN, y: NaN, z: NaN}
     - sceneGUID: ea04f42be223a0840b1e828e39882261
       bounds:
-        m_Center: {x: -40.5, y: 162, z: -40.5}
-        m_Extent: {x: 121.5, y: 243, z: 121.5}
+        m_Center: {x: 0, y: 0, z: 0}
+        m_Extent: {x: 810, y: 810, z: 810}
+    - sceneGUID: 9e97357371ae85541bbe92c8710d2f9c
+      bounds:
+        m_Center: {x: 40.5, y: 40.5, z: -40.5}
+        m_Extent: {x: 40.5, y: 40.5, z: 40.5}
     serializedHasVolumes:
     - sceneGUID: 9fc0d4010bbf28b4594072e72b8655ab
       hasProbeVolumes: 1
@@ -110,6 +114,8 @@ MonoBehaviour:
     - sceneGUID: 00000000000000000000000000000000
       hasProbeVolumes: 0
     - sceneGUID: ea04f42be223a0840b1e828e39882261
+      hasProbeVolumes: 1
+    - sceneGUID: 9e97357371ae85541bbe92c8710d2f9c
       hasProbeVolumes: 1
     bakingSets:
     - {fileID: 11400000, guid: 173ef16cc99767e4193f0a5f9ccbda2c, type: 2}

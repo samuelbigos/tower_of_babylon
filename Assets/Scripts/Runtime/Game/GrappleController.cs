@@ -66,6 +66,11 @@ public class GrappleController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (GSM.Instance.CurrentState is GameStateDead && _grappleState != GrappleState.Inactive)
+        {
+            ReleaseGrapple();
+        }
+        
         if (GSM.Instance.CurrentState is not GameStateAlive)
             return;
 

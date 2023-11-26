@@ -75,6 +75,7 @@ namespace nickmaltbie.OpenKCC.Demo
         public bool _disallowLeftMovement;
 
         public Collider GroundCollider => _groundCollider;
+        public Vector3 Velocity => _velocity;
         
         public void ZeroVelocity()
         {

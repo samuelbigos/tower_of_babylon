@@ -21,6 +21,9 @@ public class GSM : Singleton<GSM>
     {
         foreach (IGameState state in _states)
         {
+            if (state == _currentState)
+                continue;
+            
             if (state.ShouldEnter(_currentState))
             {
                 if (_currentState != null)
