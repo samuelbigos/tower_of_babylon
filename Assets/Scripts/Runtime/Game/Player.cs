@@ -8,6 +8,8 @@ using Vector3 = UnityEngine.Vector3;
 
 public class Player : Singleton<Player>
 {
+    [SerializeField] private ParticleSystem _bloodVfx;
+    
     private KinematicCharacterController _controller;
     public KinematicCharacterController Controller => _controller;
     public Camera Camera => _camera;
@@ -90,6 +92,7 @@ public class Player : Singleton<Player>
     {
         _respawnTime = 2.0f;
         _didDie = true;
+        _bloodVfx.Play();
     }
 
     private void Respawn()
@@ -102,6 +105,7 @@ public class Player : Singleton<Player>
 
         _didDie = false;
         transform.position = _activeMonument.transform.position + Vector3.up * 5.0f;
+        _bloodVfx.Stop();
     }
     
     private void OnTriggerEnter(Collider other)
