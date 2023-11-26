@@ -13,8 +13,14 @@ public class GrappleVFX : MonoBehaviour
     [SerializeField] private Transform _grappleP3;
     [SerializeField] private Transform _grappleP4;
 
-    private bool _toDisable = false;
+    private bool _toDisable;
 
+    public void On(Vector3 from, Vector3 to, Color color)
+    {
+        _arc.SetVector4("Color", color);
+        On(from, to);
+    }
+    
     public void On(Vector3 from, Vector3 to)
     {
         transform.position = from;

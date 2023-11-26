@@ -8,7 +8,7 @@ using Plane = UnityEngine.Plane;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
-public class GrappleController : MonoBehaviour
+public class GrappleController : Singleton<GrappleController>
 {
     [SerializeField] private float _grappleLength = 25.0f;
     [SerializeField] private float _grappleSpeed = 20.0f;
@@ -21,7 +21,7 @@ public class GrappleController : MonoBehaviour
     
     public InputActionReference shootGrapple;
 
-    private struct GrappleSection
+    public struct GrappleSection
     {
         public Vector3 Base;
         public Vector3 Tip;
@@ -48,8 +48,12 @@ public class GrappleController : MonoBehaviour
     private float _grappleExtension;
     private float _grappleHangTimer;
 
-    private void Awake()
+    public List<GrappleSection> ActiveGrappleSections => _grappleSections;
+
+    protected override void Awake()
     {
+        base.Awake();
+        
         for (int i = 0; i < MAX_GRAPPLE_VFX; i++)
         {
             _grappleVFXs.Add(Instantiate(_grappleVFXPrefab));
