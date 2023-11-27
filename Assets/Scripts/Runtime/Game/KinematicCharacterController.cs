@@ -54,6 +54,7 @@ namespace nickmaltbie.OpenKCC.Demo
         [SerializeField] private float _maxForce = 1.0f;
         [SerializeField] private float _bounceGrapple = 1.0f;
         [SerializeField] private float _bounce = 1.0f;
+        [SerializeField] private Transform _avatar;
         
         private float jumpInputElapsed = Mathf.Infinity;
         private float timeSinceLastJump = 0.0f;
@@ -65,7 +66,8 @@ namespace nickmaltbie.OpenKCC.Demo
         private bool jumpInputPressed => jumpAction.action.IsPressed();// || shootAction.action.WasPressedThisFrame();
         private float _roofTimer;
         private Collider _groundCollider;
-
+        private Vector3 _grappleDir;
+        
         private Vector3 _grappleTarget;
         private bool _grappling;
         private Vector3 _steering;
@@ -119,6 +121,8 @@ namespace nickmaltbie.OpenKCC.Demo
             return vec;
         }
 
+        private Vector3 _swingDir;
+
         private void DoGrapple()
         {
             Vector3 playerPos = Player.Instance.transform.position;
@@ -157,15 +161,15 @@ namespace nickmaltbie.OpenKCC.Demo
             }
             
             // Calculate swing direction.
-            Vector3 grappleDir = (grapplePosProjectedForward - playerPos).normalized;
+            _grappleDir = (grapplePosProjectedForward - playerPos).normalized;
             Vector3 fromCamera = Game.WrapAroundTower ? Utilities.Flatten(playerPos) : Vector3.forward;
-            Vector3 swingDir = Vector3.Cross(grappleDir, fromCamera).normalized;
-            if (!left) swingDir = -swingDir;
+            _swingDir = Vector3.Cross(_grappleDir, fromCamera).normalized;
+            if (!left) _swingDir = -_swingDir;
 
             // Project swing velocity onto swing direction.
             Vector3 grappleVelocity = _velocity + normalizedInput * _grappleLeanInfluence * Time.fixedDeltaTime;
-            float speed = Vector3.Dot(grappleVelocity, swingDir);
-            Vector3 desiredVelocity = swingDir * speed;
+            float speed = Vector3.Dot(grappleVelocity, _swingDir);
+            Vector3 desiredVelocity = _swingDir * speed;
             
             // Move based on grapple retraction.
             Vector3 retraction = (grapplePosProjectedForward - playerPos).normalized * _grappleRetraction;
@@ -350,6 +354,8 @@ namespace nickmaltbie.OpenKCC.Demo
 
         private void OnAnimatorIK(int layer)
         {
+            return;
+            
             // _animator.SetLookAtWeight(1);
             // _animator.SetLookAtPosition(transform.position + Vector3.up * 10.0f);
             //

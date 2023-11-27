@@ -49,6 +49,9 @@ public class GrappleController : Singleton<GrappleController>
     private float _grappleHangTimer;
 
     public List<GrappleSection> ActiveGrappleSections => _grappleSections;
+    public bool IsGrappling => _grappleState == GrappleState.Hooked;
+    
+    [SerializeField] private InputActionReference aim;
 
     protected override void Awake()
     {
@@ -262,26 +265,32 @@ public class GrappleController : Singleton<GrappleController>
 
     private Vector3 CalculateShootDirection()
     {
-        // Grapple target preview
-        Vector2 mousePos = Mouse.current.position.ReadValue();
-        Vector3 mouseWorld = Vector3.one;
-
-        if (!Game.WrapAroundTower)
+        if (Player.Instance.PlayerInput.currentControlScheme.Contains("Gamepad"))
         {
-            Plane plane = new Plane(Vector3.forward, Vector3.zero);
-            Ray ray = _camera.ScreenPointToRay(mousePos);
-            if (plane.Raycast(ray, out float dist))
-            {
-                mouseWorld = ray.GetPoint(dist);
-            }
+            return aim.action.ReadValue<Vector2>();
         }
         else
         {
-            mouseWorld = _camera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, (transform.position - _camera.transform.position).magnitude));
-            mouseWorld = Game.ProjectOnTower(mouseWorld);
-        }
+            // Grapple target preview
+            Vector2 mousePos = Mouse.current.position.ReadValue();
+            Vector3 mouseWorld = Vector3.one;
 
-        return (mouseWorld - transform.position).normalized;
+            if (!Game.WrapAroundTower)
+            {
+                Plane plane = new Plane(Vector3.forward, Vector3.zero);
+                Ray ray = _camera.ScreenPointToRay(mousePos);
+                if (plane.Raycast(ray, out float dist))
+                {
+                    mouseWorld = ray.GetPoint(dist);
+                }
+            }
+            else
+            {
+                mouseWorld = _camera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, (transform.position - _camera.transform.position).magnitude));
+                mouseWorld = Game.ProjectOnTower(mouseWorld);
+            }
+            return (mouseWorld - transform.position).normalized;
+        }
     }
 
     private bool CalculateGrappleHit(Vector3 dir, float dist, out RaycastHit hit)

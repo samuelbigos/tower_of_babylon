@@ -5,6 +5,7 @@ using nickmaltbie.OpenKCC.Demo;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using Utils;
 using Vector3 = UnityEngine.Vector3;
 
 public class Player : Singleton<Player>
@@ -16,8 +17,11 @@ public class Player : Singleton<Player>
     public Camera Camera => _camera;
 
     [SerializeField] private float _respawnTime = 2.0f;
-    
     [SerializeField] private Camera _camera;
+    [SerializeField] private SkinnedMeshRenderer _avatarRenderer;
+    [SerializeField] private MeshRenderer _grappleRenderer;
+    [SerializeField] private GameObject _grappleHalo;
+    
     private PlayerInput _input;
 
     private bool _prevOverUi;
@@ -29,8 +33,11 @@ public class Player : Singleton<Player>
     private float _respawnTimer;
     private bool _didDie;
     private List<Monument> _visitedMonuments = new List<Monument>();
+    private bool _grappleStatePrev = true;
+    private float _grappleTransitionTimer;
 
     public bool IsDead => _didDie;
+    public PlayerInput PlayerInput => _input;
 
     private List<GameObject> _queueDestroy = new List<GameObject>();
     
@@ -88,6 +95,24 @@ public class Player : Singleton<Player>
 
         if (GSM.Instance.CurrentState is GameStateAlive)
         {
+        }
+
+        if (_grappleStatePrev != GrappleController.Instance.IsGrappling)
+        {
+            _avatarRenderer.enabled = !GrappleController.Instance.IsGrappling;
+            _grappleRenderer.enabled = GrappleController.Instance.IsGrappling;
+            _grappleHalo.SetActive(GrappleController.Instance.IsGrappling);
+            _grappleStatePrev = GrappleController.Instance.IsGrappling;
+            _grappleTransitionTimer = 0.0f;
+        }
+        if (GrappleController.Instance.IsGrappling)
+        {
+            _grappleTransitionTimer += Time.deltaTime;
+            float t = Easing.Out(Mathf.Clamp01(_grappleTransitionTimer / 0.2f));
+            float s = Mathf.Lerp(3.0f, 1.8f, t);
+            _grappleRenderer.transform.localScale = new Vector3(s,s,s);
+            
+            _grappleHalo.transform.localRotation = Quaternion.Euler(0.0f, 360.0f * _grappleTransitionTimer, 0.0f);   
         }
     }
 
