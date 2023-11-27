@@ -8,7 +8,7 @@ public class Scarf : Singleton<Scarf>
     [SerializeField] private List<Cloth> _levels;
 
     private SkinnedMeshRenderer _smr;
-    private int _current = 4;
+    private int _current = 0;
 
     protected override void Awake()
     {
@@ -21,7 +21,9 @@ public class Scarf : Singleton<Scarf>
     }
     private void Update()
     {
-        _levels[_current].transform.position = Player.Instance.transform.position + new Vector3(0.0f, 3.0f,0.0f);
+        float offset = GrappleController.Instance.IsGrappling ? 1.0f : 2.0f;
+        
+        _levels[_current].transform.position = Player.Instance.transform.position + new Vector3(0.0f, offset,0.0f);
 
         Vector3 perp = Utilities.Flatten(Player.Instance.transform.position).normalized;
         _levels[_current].externalAcceleration = -Player.Instance.Controller.Velocity + Vector3.down * 5.0f + perp * 10.0f;
