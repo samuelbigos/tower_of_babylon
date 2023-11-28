@@ -10,4 +10,4 @@ Myself? Every day I view the tower from my home in Elam, and every day I wonder 
 
 ####
 
-Grapple: aim with <sprite assetName="T_Mouse_XY_Key_Dark" index=0> and hold <sprite index=0>
+Grapple - aim with <sprite="T_Mouse_XY_Key_Dark" index=0> and hold <sprite index=0>

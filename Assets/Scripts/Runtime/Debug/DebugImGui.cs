@@ -6,6 +6,7 @@ using UImGui;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
+using UnityEngine.SceneManagement;
 using Vector3 = UnityEngine.Vector3;
 
 public class DebugImGui : Singleton<DebugImGui>, Input.IDebugActions
@@ -63,14 +64,13 @@ public class DebugImGui : Singleton<DebugImGui>, Input.IDebugActions
         {
             if (ImGui.BeginMenu("Menu"))
             {
-                if (ImGui.MenuItem("Reset Save"))
-                {
-                }
                 if (ImGui.MenuItem("Reload"))
                 {
+                    SceneManager.LoadScene(SceneManager.GetActiveScene().name);
                 }
                 if (ImGui.MenuItem("Save and Quit"))
                 {
+                    Application.Quit();
                 }
                 ImGui.EndMenu();
             }

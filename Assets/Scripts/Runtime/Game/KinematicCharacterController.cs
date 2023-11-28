@@ -29,6 +29,7 @@ namespace nickmaltbie.OpenKCC.Demo
         [SerializeField] private Animator _animator;
     
         [SerializeField] private InputActionReference movePlayer;
+        [SerializeField] private InputActionReference lookAtPlayer;
         [SerializeField] private InputActionReference jumpAction;
         [SerializeField] private InputActionReference shootAction;
         
@@ -128,8 +129,16 @@ namespace nickmaltbie.OpenKCC.Demo
             Vector3 playerPos = Player.Instance.transform.position;
             
             // Extend/retract the grapple.
-            Vector2 playerMove = movePlayer.action.ReadValue<Vector2>();
-            
+            Vector2 playerMove;
+            if (Player.Instance.PlayerInput.currentControlScheme.Contains("Gamepad"))
+            {
+                playerMove = lookAtPlayer.action.ReadValue<Vector2>();
+            }
+            else
+            {
+                playerMove = movePlayer.action.ReadValue<Vector2>();
+            }
+
             // Rotate movement by current viewing angle
             Quaternion viewYaw = Quaternion.Euler(0, Camera.main.transform.rotation.eulerAngles.y, 0);
             Vector3 rotatedVector = viewYaw * playerMove;

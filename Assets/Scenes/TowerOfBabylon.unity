@@ -2499,10 +2499,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 4745487246013585655, guid: c47e6e45feccf3540ab7c97fbe7854bb, type: 3}
-      propertyPath: _grappleLeanInfluence
-      value: 8
-      objectReference: {fileID: 0}
     - target: {fileID: 5358490015197562109, guid: c47e6e45feccf3540ab7c97fbe7854bb, type: 3}
       propertyPath: m_LocalPosition.x
       value: 40.1
