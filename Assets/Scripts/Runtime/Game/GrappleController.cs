@@ -5,6 +5,7 @@ using System.Numerics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Plane = UnityEngine.Plane;
+using Quaternion = UnityEngine.Quaternion;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
@@ -267,7 +268,11 @@ public class GrappleController : Singleton<GrappleController>
     {
         if (Player.Instance.PlayerInput.currentControlScheme.Contains("Gamepad"))
         {
-            return aim.action.ReadValue<Vector2>();
+            // Rotate movement by current viewing angle
+            Vector2 playerMove = aim.action.ReadValue<Vector2>();
+            Quaternion viewYaw = Quaternion.Euler(0, Camera.main.transform.rotation.eulerAngles.y, 0);
+            Vector3 rotatedVector = viewYaw * playerMove;
+            return rotatedVector.normalized * Mathf.Min(rotatedVector.magnitude, 1.0f);
         }
         else
         {
