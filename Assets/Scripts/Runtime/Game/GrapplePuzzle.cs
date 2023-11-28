@@ -80,7 +80,7 @@ public class GrapplePuzzle : MonoBehaviour
 
                 for (int i = 0; i < _doors.Count; i++)
                 {
-                    Quaternion target = _doorInitialRot[i] * Quaternion.Euler(0.0f, i == 0 ? 90.0f : -90.0f, 0.0f);
+                    Quaternion target = _doorInitialRot[i] * Quaternion.Euler(0.0f, i == 0 ? -90.0f : 90.0f, 0.0f);
                     _doors[i].transform.rotation = Quaternion.Slerp(_doorInitialRot[i], target, t);
                 }
 

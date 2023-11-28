@@ -40,6 +40,8 @@ public class Player : Singleton<Player>
     public PlayerInput PlayerInput => _input;
 
     private List<GameObject> _queueDestroy = new List<GameObject>();
+
+    public List<Monument> AllMonuments;
     
     protected override void Awake()
     {
@@ -47,6 +49,8 @@ public class Player : Singleton<Player>
         
         _input = GetComponent<PlayerInput>();
         _controller = GetComponent<KinematicCharacterController>();
+
+        var monuments = GetComponentsInParent<Monument>();
     }
 
     private void Start()

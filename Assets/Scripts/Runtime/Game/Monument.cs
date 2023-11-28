@@ -9,7 +9,7 @@ public class Monument : MonoBehaviour
     [SerializeField] private ParticleSystem _respawnPS;
 
     private bool _isRespawnPoint;
-    
+
     private void Start()
     {
         BoxCollider collider = gameObject.AddComponent<BoxCollider>();

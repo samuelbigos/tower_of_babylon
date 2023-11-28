@@ -29,7 +29,7 @@ MonoBehaviour:
       maxHitsPerRay: 10
       collisionMask:
         serializedVersion: 2
-        m_Bits: 4294967291
+        m_Bits: 4294967289
   m_SceneGUIDs:
   - 9fc0d4010bbf28b4594072e72b8655ab
   scenesToNotBake: []
