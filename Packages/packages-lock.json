@@ -1,49 +1,5 @@
 {
   "dependencies": {
-    "com.nickmaltbie.openkcc": {
-      "version": "git+https://github.com/nicholas-maltbie/openkcc.git#release/latest",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.nickmaltbie.screenmanager": "3.2.0",
-        "com.nickmaltbie.statemachineunity": "1.4.0",
-        "com.nickmaltbie.testutilsunity": "1.1.0",
-        "com.unity.editorcoroutines": "1.0.0",
-        "com.unity.inputsystem": "1.5.0",
-        "com.unity.textmeshpro": "1.0.0"
-      },
-      "hash": "b7dfd21dbb7da98fa4d7df359a5f98fb9a055de0"
-    },
-    "com.nickmaltbie.screenmanager": {
-      "version": "https://github.com/nicholas-maltbie/ScreenManager.git#release/latest",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.unity.inputsystem": "1.0.2",
-        "com.unity.modules.audio": "1.0.0",
-        "com.unity.textmeshpro": "1.0.0"
-      },
-      "hash": "f32245f4492bc79e036431fcfb8e1c8f311d2f86"
-    },
-    "com.nickmaltbie.statemachineunity": {
-      "version": "https://github.com/nicholas-maltbie/StateMachineUnity.git#release/latest",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.nickmaltbie.testutilsunity": "1.1.0",
-        "com.unity.inputsystem": "1.0.0"
-      },
-      "hash": "fc3e9680994961154567116d5065280deb310b07"
-    },
-    "com.nickmaltbie.testutilsunity": {
-      "version": "https://github.com/nicholas-maltbie/TestUtilsUnity.git#release/v1.1.0",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.unity.inputsystem": "1.0.0"
-      },
-      "hash": "7ffc523e3c6bf93c3fe80fde7349f62435ea2b19"
-    },
     "com.psydack.uimgui": {
       "version": "file:com.psydack.uimgui",
       "depth": 0,

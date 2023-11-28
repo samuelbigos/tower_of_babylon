@@ -18,8 +18,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using nickmaltbie.OpenKCC.Character;
-using nickmaltbie.OpenKCC.Utils;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -55,6 +53,8 @@ namespace nickmaltbie.OpenKCC.Demo
         [SerializeField] private float _bounceGrapple = 1.0f;
         [SerializeField] private float _bounce = 1.0f;
         [SerializeField] private Transform _avatar;
+
+        private const float EPSILON = 0.001f;
         
         private float jumpInputElapsed = Mathf.Infinity;
         private float timeSinceLastJump = 0.0f;
@@ -206,7 +206,7 @@ namespace nickmaltbie.OpenKCC.Demo
             }
             
             // If player is not allowed to move, stop player input
-            if (PlayerInputUtils.playerMovementState == PlayerInputState.Deny || Player.Instance.IsDead)
+            if (Player.Instance.IsDead)
             {
                 playerMove = Vector2.zero;
             }
@@ -417,7 +417,7 @@ namespace nickmaltbie.OpenKCC.Demo
             if (closeToGround && groundHit.distance > 0)
             {
                 // Snap the player down the distance they are from the ground
-                transform.position += Vector3.down * (groundHit.distance - KCCUtils.Epsilon * 2);
+                transform.position += Vector3.down * (groundHit.distance - EPSILON * 2);
             }
         }
 
@@ -437,7 +437,7 @@ namespace nickmaltbie.OpenKCC.Demo
             Vector3 reflectedVelocity = _velocity;
             int bounces = 0;
 
-            while (bounces < maxBounces && remaining.magnitude > KCCUtils.Epsilon)
+            while (bounces < maxBounces && remaining.magnitude > EPSILON)
             {
                 // Do a cast of the collider to see if an object is hit during this
                 // movement bounce
@@ -461,7 +461,7 @@ namespace nickmaltbie.OpenKCC.Demo
                 // Set the fraction of remaining movement (minus some small value)
                 position += remaining * (fraction);
                 // Push slightly along normal to stop from getting caught in walls
-                position += hit.normal * KCCUtils.Epsilon * 2;
+                position += hit.normal * EPSILON * 2;
                 // Decrease remaining movement by fraction of movement remaining
                 remaining *= (1 - fraction);
 
@@ -474,8 +474,9 @@ namespace nickmaltbie.OpenKCC.Demo
 
                 // Normalize angle between to be between 0 and 1
                 // 0 means no angle, 1 means 90 degree angle
-                angleBetween = Mathf.Min(KCCUtils.MaxAngleShoveDegrees, Mathf.Abs(angleBetween));
-                float normalizedAngle = angleBetween / KCCUtils.MaxAngleShoveDegrees;
+                float MaxAngleShoveDegrees = 60.0f;
+                angleBetween = Mathf.Min(MaxAngleShoveDegrees, Mathf.Abs(angleBetween));
+                float normalizedAngle = angleBetween / MaxAngleShoveDegrees;
 
                 // Reduce the remaining movement by the remaining movement that ocurred
                 remaining *= Mathf.Pow(1 - normalizedAngle, anglePower) * 0.9f + 0.1f;
@@ -486,7 +487,7 @@ namespace nickmaltbie.OpenKCC.Demo
 
                 // If projected remaining movement is less than original remaining movement (so if the projection broke
                 // due to float operations), then change this to just project along the vertical.
-                if (projected.magnitude + KCCUtils.Epsilon < remaining.magnitude)
+                if (projected.magnitude + EPSILON < remaining.magnitude)
                 {
                     remaining = Vector3.ProjectOnPlane(remaining, Vector3.up).normalized * remaining.magnitude;
                 }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using nickmaltbie.OpenKCC.Utils;
 using UnityEngine;
 
 public class CameraController : Singleton<CameraController>

@@ -1,9 +1,5 @@
 {
   "dependencies": {
-    "com.nickmaltbie.openkcc": "git+https://github.com/nicholas-maltbie/openkcc.git#release/latest",
-    "com.nickmaltbie.screenmanager": "https://github.com/nicholas-maltbie/ScreenManager.git#release/latest",
-    "com.nickmaltbie.statemachineunity": "https://github.com/nicholas-maltbie/StateMachineUnity.git#release/latest",
-    "com.nickmaltbie.testutilsunity": "https://github.com/nicholas-maltbie/TestUtilsUnity.git#release/v1.1.0",
     "com.psydack.uimgui": "4.1.1",
     "com.unity.editoriterationprofiler": "https://github.com/Unity-Technologies/com.unity.editoriterationprofiler.git",
     "com.unity.feature.development": "1.0.2",
