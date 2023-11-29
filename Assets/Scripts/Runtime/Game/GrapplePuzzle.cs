@@ -13,6 +13,7 @@ public class GrapplePuzzle : MonoBehaviour
     [SerializeField] private List<Vector2Int> _requiredConnections;
     [SerializeField] private List<GameObject> _doors;
     [SerializeField] private float _doorOpenTime = 5.0f;
+    [SerializeField] private AudioSource _doorOpenSFX;
 
     private Dictionary<Vector2Int, GrappleVFX> _plaqueVFXs = new Dictionary<Vector2Int, GrappleVFX>();
 
@@ -41,7 +42,9 @@ public class GrapplePuzzle : MonoBehaviour
     private float _doorOpenTimer;
     private bool _doorOpen;
     private List<Quaternion> _doorInitialRot = new List<Quaternion>();
-
+    private List<Vector2Int> _allConnections = new List<Vector2Int>();
+    private Dictionary<Vector2Int, bool> _connectionOn = new Dictionary<Vector2Int, bool>();
+    
     private void Start()
     {
         for (int i = 0; i < _coords.Length; i++)
@@ -58,7 +61,10 @@ public class GrapplePuzzle : MonoBehaviour
                     Vector2Int coord = new Vector2Int(x + _dirs[n].x, y + _dirs[n].y);
                     if (coord.x >= 3 || coord.y >= 3) continue;
                     if (coord.x < 0 || coord.y < 0) continue;
-                    _plaqueVFXs[new Vector2Int(_coordToIndex[new Vector2Int(x, y)], _coordToIndex[coord])] = Instantiate(_plaqueVFXPrefab);
+                    Vector2Int connection = new Vector2Int(_coordToIndex[new Vector2Int(x, y)], _coordToIndex[coord]);
+                    _plaqueVFXs[connection] = Instantiate(_plaqueVFXPrefab);
+                    _allConnections.Add(connection);
+                    _connectionOn.Add(connection, false);
                 }
             }
         }
@@ -93,37 +99,63 @@ public class GrapplePuzzle : MonoBehaviour
         List<GrappleController.GrappleSection> sections = GrappleController.Instance.ActiveGrappleSections;
 
         int completed = 0;
-        for (int i = 0; i < _requiredConnections.Count; i++)
+        int broken = 0;
+        for (int i = 0; i < _allConnections.Count; i++)
         {
-            bool completeSection = false;
-            SphereCollider p1 = _pegs[_requiredConnections[i].x];
-            SphereCollider p2 = _pegs[_requiredConnections[i].y];
+            int sectionState = 0;
+            SphereCollider p1 = _pegs[_allConnections[i].x];
+            SphereCollider p2 = _pegs[_allConnections[i].y];
             foreach (GrappleController.GrappleSection section in sections)
             {
                 if ((p1.bounds.Contains(section.Base) && p2.bounds.Contains(section.Tip))
                  || (p2.bounds.Contains(section.Base) && p1.bounds.Contains(section.Tip)))
                 {
-                    completeSection = true;
-                    completed++;
-                    break;
+                    if (_requiredConnections.Contains(_allConnections[i]))
+                    {
+                        sectionState = 1;
+                        completed++;
+                        break;
+                    }
+                    else
+                    {
+                        sectionState = 2;
+                        broken++;
+                        break;
+                    }
                 }
             }
 
-            float intensity = 100.0f;
-            if (completeSection)
+            if (sectionState != 0)
             {
-                
-                Color col = Color.white * intensity;
-                _plaqueVFXs[_requiredConnections[i]].On(_plaquePegs[_requiredConnections[i].x].position, _plaquePegs[_requiredConnections[i].y].position, col);
+                _connectionOn[_allConnections[i]] = true;
             }
-            else
+            
+            float intensity = 100.0f;
+            if (sectionState == 1)
+            {
+                Color col = Color.green * intensity;
+                _plaqueVFXs[_allConnections[i]].On(_plaquePegs[_allConnections[i].x].position, _plaquePegs[_allConnections[i].y].position, col);
+            }
+            else if (sectionState == 2)
+            {
+                Color col = Color.red * intensity;
+                _plaqueVFXs[_allConnections[i]].On(_plaquePegs[_allConnections[i].x].position, _plaquePegs[_allConnections[i].y].position, col);
+            }
+            else if (_requiredConnections.Contains(_allConnections[i]))
             {
                 Color col = new Color((float)191/255 * intensity, (float)90/255 * intensity, 0.0f, 1.0f);
-                _plaqueVFXs[_requiredConnections[i]].On(_plaquePegs[_requiredConnections[i].x].position, _plaquePegs[_requiredConnections[i].y].position, col);
+                _plaqueVFXs[_allConnections[i]].On(_plaquePegs[_allConnections[i].x].position, _plaquePegs[_allConnections[i].y].position, col);
+            }
+            else if (_connectionOn[_allConnections[i]])
+            {
+                _plaqueVFXs[_allConnections[i]].Off();
             }
         }
 
-        if (completed == _requiredConnections.Count)
+        if (completed == _requiredConnections.Count && broken == 0)
+        {
+            _doorOpenSFX.Play();
             _puzzleComplete = true;
+        }
     }
 }

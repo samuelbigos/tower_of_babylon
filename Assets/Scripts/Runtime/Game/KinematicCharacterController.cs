@@ -225,7 +225,13 @@ namespace nickmaltbie.OpenKCC.Demo
 
             // Check if the player is falling
             (bool onGround, float groundAngle) = CheckGrounded(_velocity, out RaycastHit groundHit);
-            _falling = !(onGround && groundAngle <= maxWalkingAngle);
+            
+            bool falling = !(onGround && groundAngle <= maxWalkingAngle);
+            if (!falling && _falling && elapsedFalling > 0.5f)
+            {
+                Player.Instance.SFXLand();
+            }
+            _falling = falling;
 
             _groundCollider = onGround ? groundHit.collider : null;
 
@@ -259,6 +265,7 @@ namespace nickmaltbie.OpenKCC.Demo
             // If the player is attemtping to jump and can jump allow for player jump
             if (jumpInputPressed)
             {
+                Player.Instance.SFXJump();
                 jumpInputElapsed = 0.0f;
             }
             // Player is attempting to jump if they hit jump this frame or within the last buffer time.
@@ -332,7 +339,7 @@ namespace nickmaltbie.OpenKCC.Demo
             }
             
             // Point character in the correct direction.
-            Vector3 forward = Utilities.Flatten(_velocity);
+            Vector3 forward = Utilities.Flatten(_velocity).normalized;
             if (!Mathf.Approximately(forward.magnitude, 0.0f))
             {
                 if (_grappling)
@@ -349,14 +356,17 @@ namespace nickmaltbie.OpenKCC.Demo
             UpdateAnimator();
         }
 
+        static public bool IsRunning;
+
         private void UpdateAnimator()
         {
             Vector3 forward = Utilities.Flatten(_velocity);
             float movement = Vector3.Dot(forward, _velocity);
+            IsRunning = Mathf.Abs(movement) > 1.0f && !_falling;
             
             _animator.SetBool("Jump", _falling);
             _animator.SetFloat("Move", movement);
-            _animator.SetBool("Running", Mathf.Abs(movement) > 1.0f);
+            _animator.SetBool("Running", IsRunning);
             _animator.SetBool("Grappling", _grappling);
             _animator.SetBool("Dead", Player.Instance.IsDead);
         }
@@ -530,7 +540,7 @@ namespace nickmaltbie.OpenKCC.Demo
         /// <param name="hit">First object hit and related information, will have a distance of Mathf.Infinity if none
         /// is found.</param>
         /// <returns>True if an object is hit within distance, false otherwise.</returns>
-        private bool CastSelf(Vector3 pos, Quaternion rot, Vector3 dir, float dist, out RaycastHit hit)
+        public bool CastSelf(Vector3 pos, Quaternion rot, Vector3 dir, float dist, out RaycastHit hit)
         {
             // Get Parameters associated with the KCC
             Vector3 center = rot * capsuleCollider.center + pos;

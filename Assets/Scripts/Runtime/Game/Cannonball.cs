@@ -38,4 +38,12 @@ public class Cannonball : MonoBehaviour
             _rb.position = Game.ProjectOnTower(_rb.position);
         }
     }
+    
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.layer == (int)Utilities.PhysicsLayers.Monument)
+        {
+            Destroy(gameObject);
+        }
+    }
 }

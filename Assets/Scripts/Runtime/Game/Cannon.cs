@@ -10,6 +10,7 @@ public class Cannon : MonoBehaviour
     [SerializeField] private float _shotPower;
     [SerializeField] private Transform _barrelBack;
     [SerializeField] private Transform _barrelFront;
+    [SerializeField] private AudioSource _fireSFX;
     
     private float _timer;
 
@@ -29,5 +30,6 @@ public class Cannon : MonoBehaviour
         Vector3 dir = (_barrelFront.position - _barrelBack.position).normalized;
         ball.transform.position = _barrelFront.position + dir * 1.0f;
         ball.Launch(dir * _shotPower);
+        _fireSFX.Play();
     }
 }

@@ -56,6 +56,10 @@ public class GameStateIntro : MonoBehaviour, IGameState
     {
         if ((InputManager.Instance.PlayerShoot.action.WasPressedThisFrame() || Game.Instance.InGym) && !_canExit)
         {
+            if (_transitioning)
+            {
+                _speed = true;
+            }
             _transitioning = true;
             _currentIntro++;
             _initialPosition = _camera.transform.position;

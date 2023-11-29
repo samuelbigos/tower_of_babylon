@@ -153,6 +153,7 @@ public class GrappleController : Singleton<GrappleController>
         {
             _grappleSections[^1] = new GrappleSection() { Tip = transform.position, Base = hit.point, CollideNormal = _grappleSections[^1].CollideNormal};
             _grappleState = GrappleState.Hooked;
+            Player.Instance.SFXGrappleImpact();
             return;
         }
         
@@ -248,6 +249,8 @@ public class GrappleController : Singleton<GrappleController>
         Vector3 dir = CalculateShootDirection();
         _grappleAngle.x = Vector3.Dot(dir, PlayerForward());
         _grappleAngle.y = Vector3.Dot(dir, Vector3.up);
+        
+        Player.Instance.SFXGrapple();
     }
 
     private void ReleaseGrapple()
