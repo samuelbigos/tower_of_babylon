@@ -203,16 +203,6 @@ namespace nickmaltbie.OpenKCC.Demo
             {
                 playerMove.x = 0.0f;
             }
-
-            if (!_allowDepthMovement)
-            {
-                playerMove.y = 0.0f;
-            }
-
-            if (_disallowLeftMovement)
-            {
-                playerMove.x = Mathf.Clamp01(playerMove.x);
-            }
             
             // If player is not allowed to move, stop player input
             if (Player.Instance.IsDead)

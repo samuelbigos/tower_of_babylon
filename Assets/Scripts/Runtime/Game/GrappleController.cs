@@ -73,7 +73,7 @@ public class GrappleController : Singleton<GrappleController>
 
     private void Update()
     {
-        if (GSM.Instance.CurrentState is GameStateAlive)
+        if (GSM.Instance.CurrentState is GameStateAlive || GSM.Instance.CurrentState is GameStateElevator)
         {
             _shootThisFrame |= shootGrapple.action.WasPressedThisFrame();
             _releaseThisFrame |= shootGrapple.action.WasReleasedThisFrame();
@@ -87,7 +87,7 @@ public class GrappleController : Singleton<GrappleController>
             ReleaseGrapple();
         }
         
-        if (GSM.Instance.CurrentState is not GameStateAlive)
+        if (GSM.Instance.CurrentState is not GameStateAlive && GSM.Instance.CurrentState is not GameStateElevator)
             return;
 
         if (!Game.Instance.ShouldGrapple)

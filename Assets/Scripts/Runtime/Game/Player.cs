@@ -126,7 +126,7 @@ public class Player : Singleton<Player>
 
     private void FixedUpdate()
     {
-        if (GSM.Instance.CurrentState is GameStateAlive || GSM.Instance.CurrentState is GameStateDead)
+        if (GSM.Instance.CurrentState is GameStateAlive || GSM.Instance.CurrentState is GameStateDead || GSM.Instance.CurrentState is GameStateElevator)
         {
             _controller.ManualFixedUpdate();
         }

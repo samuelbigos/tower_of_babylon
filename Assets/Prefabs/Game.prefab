@@ -18,7 +18,6 @@ GameObject:
   - component: {fileID: 448736308791359402}
   - component: {fileID: 3204558933218837790}
   - component: {fileID: 431505972896040348}
-  - component: {fileID: 249074323476856322}
   m_Layer: 0
   m_Name: Game
   m_TagString: Untagged
@@ -57,11 +56,8 @@ MonoBehaviour:
   _player: {fileID: 0}
   _wrapAroundTower: 1
   _defaultTowerRadius: 50
-  _tipTowerRadius: 15
-  _tipVolume: {fileID: 0}
   _elevatorVolume: {fileID: 0}
-  _tunnelTop: {fileID: 0}
-  _tunnelBot: {fileID: 0}
+  _towerTop: {fileID: 0}
   ShouldGrapple: 1
   PlayerOnTopOfTower: 0
 --- !u!114 &823113074598646020
@@ -148,6 +144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecd4ef426c6a56c42b436deee2fbd2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _whiteFade: {fileID: 0}
 --- !u!114 &3204558933218837790
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -178,17 +175,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7cdc9d6f28f3fdf4c860fe2f3a80c5f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &249074323476856322
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4592592459422296609}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ecd4ef426c6a56c42b436deee2fbd2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
