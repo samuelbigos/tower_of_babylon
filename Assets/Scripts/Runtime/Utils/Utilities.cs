@@ -20,7 +20,7 @@ public static class Utilities
     }
 
     public const int KillZoneCollisionMask = 1 << (int)PhysicsLayers.KillZone;
-    public const int BlockerCollisionMask = 1 << (int)PhysicsLayers.Blocker;
+    public const int BlockerCollisionMask = 1 << (int)PhysicsLayers.KillZone;
     public const int GrappleCollisionMask = 1 << (int)PhysicsLayers.Grapple;
 
     public static Vector3 Flatten(Vector3 vec)

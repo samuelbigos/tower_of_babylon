@@ -124,18 +124,18 @@ public class GrappleController : Singleton<GrappleController>
     private void ProcessGrappleInactive()
     {
         Vector3 dir = CalculateShootDirection();
-        bool didHit = CalculateGrappleHit(dir, 99999.0f, out RaycastHit hit);
+        bool didHit = CalculateGrappleHit(dir, 99999.0f, out RaycastHit hit, out bool hitBlocker);
         _grappleTargetGO.SetActive(didHit);
-        //if (didHit)
+        if (didHit)
         {
             Vector3 grapplePoint = Game.WrapAroundTower ? Game.ProjectOnTower(hit.point) : hit.point;
             _grappleTargetGO.transform.position = grapplePoint;
-            
-            if (_shootThisFrame)
-            {
-                _shootThisFrame = false;
-                ShootGrapple();
-            }
+        }
+        
+        if (_shootThisFrame)
+        {
+            _shootThisFrame = false;
+            ShootGrapple();
         }
     }
     
@@ -148,12 +148,19 @@ public class GrappleController : Singleton<GrappleController>
         }
 
         Vector3 dir = PlayerForward() * _grappleAngle.x + Vector3.up * _grappleAngle.y;
-        bool didHit = CalculateGrappleHit(dir, _grappleExtension, out RaycastHit hit);
+        bool didHit = CalculateGrappleHit(dir, _grappleExtension, out RaycastHit hit, out bool hitBlocker);
         if (didHit)
         {
-            _grappleSections[^1] = new GrappleSection() { Tip = transform.position, Base = hit.point, CollideNormal = _grappleSections[^1].CollideNormal};
-            _grappleState = GrappleState.Hooked;
-            Player.Instance.SFXGrappleImpact();
+            if (hitBlocker)
+            {
+                ReleaseGrapple();
+            }
+            else
+            {
+                _grappleSections[^1] = new GrappleSection() { Tip = transform.position, Base = hit.point, CollideNormal = _grappleSections[^1].CollideNormal};
+                _grappleState = GrappleState.Hooked;
+                Player.Instance.SFXGrappleImpact();
+            }
             return;
         }
         
@@ -301,10 +308,11 @@ public class GrappleController : Singleton<GrappleController>
         }
     }
 
-    private bool CalculateGrappleHit(Vector3 dir, float dist, out RaycastHit hit)
+    private bool CalculateGrappleHit(Vector3 dir, float dist, out RaycastHit hit, out bool hitBlocker)
     {
         bool didHit = Physics.Raycast(transform.position, dir, out hit, dist, GRAPPLE_MASK);
-        return didHit && hit.collider.gameObject.layer != (int)Utilities.PhysicsLayers.Blocker;
+        hitBlocker = didHit && hit.collider.gameObject.layer == (int)Utilities.PhysicsLayers.KillZone;
+        return didHit;
     }
 
     private Vector3 PlayerForward()

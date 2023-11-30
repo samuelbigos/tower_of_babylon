@@ -179,7 +179,7 @@ public class Player : Singleton<Player>
         {
             _avatarRenderer.enabled = !GrappleController.Instance.IsGrappling;
             _grappleRenderer.enabled = GrappleController.Instance.IsGrappling;
-            (_avatarCollider as CapsuleCollider).height = GrappleController.Instance.IsGrappling ? 2.0f : 6.0f;
+            (_avatarCollider as CapsuleCollider).height = GrappleController.Instance.IsGrappling ? 2.0f : 4.0f;
             _grappleHalo.SetActive(GrappleController.Instance.IsGrappling);
             _grappleStatePrev = GrappleController.Instance.IsGrappling;
             _grappleTransitionTimer = 0.0f;
