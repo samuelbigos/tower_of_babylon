@@ -12,6 +12,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: BLUE1
+    second: {fileID: -876546973899608171, guid: ac849ec84ed33b34bafa5fbe15954ca9, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Emissive
     second: {fileID: -876546973899608171, guid: f19a5a199624d0b4d8bbc7b83c1a6c88, type: 3}
   - first:

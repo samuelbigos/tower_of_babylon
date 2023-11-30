@@ -12,8 +12,18 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: BLUE1
+    second: {fileID: -876546973899608171, guid: ac849ec84ed33b34bafa5fbe15954ca9, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: CollisionNormal
     second: {fileID: 5955844840416208063, guid: c7ef18a1c14643c4abe338bed53754be, type: 3}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: LighterStone
+    second: {fileID: -876546973899608171, guid: 31cadb83286e37e44997e5ae96794ad5, type: 3}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
