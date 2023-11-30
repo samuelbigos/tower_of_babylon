@@ -9,6 +9,7 @@ public class Scarf : Singleton<Scarf>
 
     private SkinnedMeshRenderer _smr;
     private int _current = 0;
+    private bool _upgradedOnce = false;
 
     protected override void Awake()
     {
@@ -31,6 +32,12 @@ public class Scarf : Singleton<Scarf>
 
     public void Upgrade()
     {
+        if (!_upgradedOnce)
+        {
+            _upgradedOnce = true;
+            return;
+        }
+        
         if (_current >= _levels.Count - 1)
             return;
         

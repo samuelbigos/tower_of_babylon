@@ -370,43 +370,7 @@ namespace nickmaltbie.OpenKCC.Demo
             _animator.SetBool("Grappling", _grappling);
             _animator.SetBool("Dead", Player.Instance.IsDead);
         }
-
-        private void OnAnimatorIK(int layer)
-        {
-            return;
-            
-            // _animator.SetLookAtWeight(1);
-            // _animator.SetLookAtPosition(transform.position + Vector3.up * 10.0f);
-            //
-            // _animator.SetIKPositionWeight(AvatarIKGoal.RightHand,1);
-            // _animator.SetIKRotationWeight(AvatarIKGoal.RightHand,1);
-            
-            if(_grappling) 
-            {
-                //_animator.SetLookAtWeight(1.0f);
-                //_animator.SetLookAtPosition(_grappleTarget);
-                Vector3 handTarget = transform.position + (_grappleTarget - transform.position).normalized * 3.0f;
-                _animator.SetIKPositionWeight(AvatarIKGoal.RightHand,1);
-                _animator.SetIKPositionWeight(AvatarIKGoal.LeftHand,1);
-                _animator.SetIKPosition(AvatarIKGoal.RightHand, handTarget);
-                _animator.SetIKPosition(AvatarIKGoal.LeftHand, handTarget);
-                
-                Vector3 footTarget = transform.position - (_grappleTarget - transform.position).normalized * 5.0f;
-                _animator.SetIKPositionWeight(AvatarIKGoal.RightFoot,1);
-                _animator.SetIKPositionWeight(AvatarIKGoal.LeftFoot,1);
-                _animator.SetIKPosition(AvatarIKGoal.RightFoot, footTarget);
-                _animator.SetIKPosition(AvatarIKGoal.LeftFoot, footTarget);
-            
-            }
-            //if the IK is not active, set the position and rotation of the hand and head back to the original position
-            else 
-            {          
-                _animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 0);
-                _animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 0);
-                _animator.SetLookAtWeight(0);
-            }
-        }    
-
+        
         /// <summary>
         /// Check if the player is standing on the ground.
         /// </summary>
@@ -471,10 +435,10 @@ namespace nickmaltbie.OpenKCC.Demo
                 }
                 
                 // If we are overlapping with something, just exit.
-                if (hit.distance == 0)
-                {
-                    break;
-                }
+                // if (hit.distance == 0)
+                // {
+                //     break;
+                // }
 
                 float fraction = hit.distance / distance;
                 // Set the fraction of remaining movement (minus some small value)

@@ -10,4 +10,10 @@ Myself? Every day I view the tower from my home in Elam, and every day I wonder 
 
 ####
 
-Grapple - aim with <sprite="T_Mouse_XY_Key_Dark" index=0> and hold <sprite index=0>
+Run with <sprite="T_A_Key_Dark" index=0><sprite="T_D_Key_Dark" index=0> and jump with <sprite="T_Space_Key_Dark" index=0>. If you get stuck, reset with <sprite="T_BackSpace_Key_Dark" index=0>
+
+To grapple, aim with <sprite="T_Mouse_XY_Key_Dark" index=0> and hold <sprite index=0>.<br><br>
+While grappling, <sprite="T_W_Key_Dark" index=0><sprite="T_S_Key_Dark" index=0> will retract/extend the grapple, while <sprite="T_A_Key_Dark" index=0><sprite="T_D_Key_Dark" index=0> will swing.<br><br>
+Retracting the grapple builds momentum.
+
+Chain grapples in mid-air to scale larger obstacles.

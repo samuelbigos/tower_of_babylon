@@ -14,7 +14,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2b64d1f3b61be4d419ce5adaeaf7c4b8, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.669782
+      value: 0.66978204
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2b64d1f3b61be4d419ce5adaeaf7c4b8, type: 3}
       propertyPath: m_LocalScale.z
@@ -22,43 +22,43 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2b64d1f3b61be4d419ce5adaeaf7c4b8, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.98
+      value: -8.91
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2b64d1f3b61be4d419ce5adaeaf7c4b8, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 20.74
+      value: -0.06
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2b64d1f3b61be4d419ce5adaeaf7c4b8, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -49.38
+      value: -46.79
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2b64d1f3b61be4d419ce5adaeaf7c4b8, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.94551957
+      value: 0.9976408
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2b64d1f3b61be4d419ce5adaeaf7c4b8, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.0116861295
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2b64d1f3b61be4d419ce5adaeaf7c4b8, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.32335556
+      value: 0.06865046
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2b64d1f3b61be4d419ce5adaeaf7c4b8, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.03601881
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2b64d1f3b61be4d419ce5adaeaf7c4b8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 2.602
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2b64d1f3b61be4d419ce5adaeaf7c4b8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -37.681
+      value: 7.873
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2b64d1f3b61be4d419ce5adaeaf7c4b8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 3.475
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 2b64d1f3b61be4d419ce5adaeaf7c4b8, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -67,6 +67,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 2b64d1f3b61be4d419ce5adaeaf7c4b8, type: 3}
       propertyPath: m_Name
       value: Monument
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2b64d1f3b61be4d419ce5adaeaf7c4b8, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -96,8 +100,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c37c6cf019df3ac4b898a9f29108d98e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _text: 'Grapple: aim with <sprite="T_Mouse_XY_Key_Dark" index=0> and hold <sprite
-    index=0>'
+  _text: Run with <sprite="T_A_Key_Dark" index=0><sprite="T_D_Key_Dark" index=0>
+    and jump with <sprite="T_Space_Key_Dark" index=0>
   _respawnPS: {fileID: 253007644064519631}
 --- !u!4 &1021947267004235943 stripped
 Transform:
@@ -155,6 +159,10 @@ PrefabInstance:
     - target: {fileID: 5058157602755751833, guid: c79e0eee5115c524aa6f34a5fee85255, type: 3}
       propertyPath: m_Name
       value: MonumentPS
+      objectReference: {fileID: 0}
+    - target: {fileID: 5058157602755751833, guid: c79e0eee5115c524aa6f34a5fee85255, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

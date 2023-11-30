@@ -26,6 +26,8 @@ public class Player : Singleton<Player>
 
     [SerializeField] private Collider _avatarCollider;
     
+    [SerializeField] private InputActionReference resetAction;
+    
     private PlayerInput _input;
 
     private bool _prevOverUi;
@@ -136,6 +138,12 @@ public class Player : Singleton<Player>
 
     private void Update()
     {
+        if (resetAction.action.WasPressedThisFrame())
+        {
+            _controller.ZeroVelocity();
+            Respawn();
+        }
+        
         // Disable player input if mouse over ImGui elements.
         ImGuiIOPtr io = ImGui.GetIO();
         if (io.WantCaptureMouse && !_prevOverUi)
@@ -270,6 +278,7 @@ public class Player : Singleton<Player>
             {
                 _visitedMonuments.Add(monument);
                 Scarf.Instance.Upgrade();
+                GrappleController.Instance.IncreaseGrappleLength();
             }
             _monumentSrc.Play();
         }

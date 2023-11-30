@@ -25,9 +25,6 @@ public class GameStateAlive : MonoBehaviour, IGameState
         if (GSM.Instance.CurrentState is GameStateIntro && (GSM.Instance.CurrentState as GameStateIntro).IntroComplete)
             return true;
 
-        if (GSM.Instance.CurrentState is GameStateElevator && (GSM.Instance.CurrentState as GameStateElevator).ElevatorComplete)
-            return true;
-
         if (GSM.Instance.CurrentState is GameStateDead && !Player.Instance.IsDead)
             return true;
         

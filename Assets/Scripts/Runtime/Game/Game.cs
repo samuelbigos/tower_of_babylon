@@ -68,34 +68,34 @@ public class Game : Singleton<Game>
             _towerRadius = _tipTowerRadius + (_defaultTowerRadius - _tipTowerRadius) * t;
 
             Vector3 playerPos = _player.transform.position;
-            if (_elevatorVolume.bounds.Contains(_player.transform.position))
-            {
-                Vector3 posN = new Vector3(playerPos.x, 0.0f, playerPos.z);
-                posN = posN.normalized;
-                float atan = -Mathf.Atan2(posN.x, posN.z);
-
-                float atanDelta = atan - _atanPrev;
-                _atanPrev = atan;
-
-                if (!_playerInElevatorVolume)
-                {
-                    _radiusOnEnterElevatorVolume = _towerRadius;
-                    _playerInElevatorVolume = true;
-                    _player.Controller._disallowLeftMovement = true;
-                    ShouldGrapple = false;
-                }
-                else
-                {
-                    _angle += Mathf.Max(atanDelta, 0.0f);
-                    t = _angle / Mathf.PI;
-                    _towerRadius = Mathf.Max((1.0f - t) * _radiusOnEnterElevatorVolume, 5.0f);
-
-                    if (t > 0.9f)
-                    {
-                        PlayerOnTopOfTower = true;
-                    }
-                }
-            }
+            // if (_elevatorVolume.bounds.Contains(_player.transform.position))
+            // {
+            //     Vector3 posN = new Vector3(playerPos.x, 0.0f, playerPos.z);
+            //     posN = posN.normalized;
+            //     float atan = -Mathf.Atan2(posN.x, posN.z);
+            //
+            //     float atanDelta = atan - _atanPrev;
+            //     _atanPrev = atan;
+            //
+            //     if (!_playerInElevatorVolume)
+            //     {
+            //         _radiusOnEnterElevatorVolume = _towerRadius;
+            //         _playerInElevatorVolume = true;
+            //         _player.Controller._disallowLeftMovement = true;
+            //         //ShouldGrapple = false;
+            //     }
+            //     else
+            //     {
+            //         _angle += Mathf.Max(atanDelta, 0.0f);
+            //         t = _angle / Mathf.PI;
+            //         _towerRadius = Mathf.Max((1.0f - t) * _radiusOnEnterElevatorVolume, 5.0f);
+            //
+            //         if (t > 0.9f)
+            //         {
+            //             PlayerOnTopOfTower = true;
+            //         }
+            //     }
+            // }
         }
 
         if (_playerInElevatorVolume && !_elevatorVolume.bounds.Contains(_player.transform.position))

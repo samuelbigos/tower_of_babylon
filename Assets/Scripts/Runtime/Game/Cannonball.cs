@@ -41,7 +41,7 @@ public class Cannonball : MonoBehaviour
     
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == (int)Utilities.PhysicsLayers.Monument)
+        if (other.gameObject.layer == (int)Utilities.PhysicsLayers.Monument || other.gameObject.layer == (int)Utilities.PhysicsLayers.KillZone)
         {
             Destroy(gameObject);
         }

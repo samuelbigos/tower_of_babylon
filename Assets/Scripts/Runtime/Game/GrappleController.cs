@@ -54,6 +54,11 @@ public class GrappleController : Singleton<GrappleController>
     
     [SerializeField] private InputActionReference aim;
 
+    public void IncreaseGrappleLength()
+    {
+        _grappleLength += 2.5f;
+    }
+
     protected override void Awake()
     {
         base.Awake();
@@ -68,8 +73,11 @@ public class GrappleController : Singleton<GrappleController>
 
     private void Update()
     {
-        _shootThisFrame |= shootGrapple.action.WasPressedThisFrame();
-        _releaseThisFrame |= shootGrapple.action.WasReleasedThisFrame();
+        if (GSM.Instance.CurrentState is GameStateAlive)
+        {
+            _shootThisFrame |= shootGrapple.action.WasPressedThisFrame();
+            _releaseThisFrame |= shootGrapple.action.WasReleasedThisFrame();
+        }
     }
 
     private void FixedUpdate()
@@ -242,7 +250,7 @@ public class GrappleController : Singleton<GrappleController>
         Vector3 target = _grappleSections[^1].Base;
         Player.Instance.Controller.SetGrapple(target);
 
-        _grappleTargetGO.transform.position = target;
+        _grappleTargetGO.transform.position = _grappleSections[0].Base;
     }
 
     private void ShootGrapple()

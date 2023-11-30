@@ -4,12 +4,8 @@ using UnityEngine;
 
 public class GameStateElevator : MonoBehaviour, IGameState
 {
-    [SerializeField] private Elevator _elevator;
-    
     private Player _player;
 
-    public bool ElevatorComplete => _elevator.Complete;
-    
     public void OnEnter(IGameState prevState)
     {
     }
