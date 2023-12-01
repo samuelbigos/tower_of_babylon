@@ -10,6 +10,8 @@ public class Elevator : MonoBehaviour
     [SerializeField] private float _transitionTime;
     [SerializeField] private Transform _moveTarget;
 
+    private AudioSource _endMusic;
+    
     public bool Complete => _state == State.Complete;
     
     private enum State
@@ -22,7 +24,12 @@ public class Elevator : MonoBehaviour
     private float _timer;
     private State _state = State.Initiating;
     private Vector3 _startPosition;
-    
+
+    private void Awake()
+    {
+        _endMusic = GetComponent<AudioSource>();
+    }
+
     private void FixedUpdate()
     {
         if (GSM.Instance.CurrentState is not GameStateElevator)
@@ -39,7 +46,8 @@ public class Elevator : MonoBehaviour
                     _startPosition = transform.position;
                     _timer = 0.0f;
                     
-                    GetComponent<AudioSource>().Play();
+                    _endMusic.Play();
+                    _endMusic.volume = 0.0f;
                 }
                 break;
             case State.Moving:
@@ -51,6 +59,8 @@ public class Elevator : MonoBehaviour
                 {
                     _state = State.Complete;
                 }
+
+                _endMusic.volume = t;
                 break;
             case State.Complete:
             default:

@@ -41,6 +41,9 @@ public class Game : Singleton<Game>
 
     public bool PlayerOnTopOfTower;
 
+    public bool TimingRun = false;
+    public float RunTime = 0.0f;
+    
     protected override void Awake()
     {
         base.Awake();
@@ -51,6 +54,11 @@ public class Game : Singleton<Game>
     private void Update()
     {
         GSM.Instance.ManualUpdate();
+
+        if (TimingRun)
+        {
+            RunTime += Time.deltaTime;
+        }
 
         if (_gymMode)
             return;

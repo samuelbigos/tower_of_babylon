@@ -93,6 +93,7 @@ public class GameStateIntro : MonoBehaviour, IGameState
                 {
                     _canExit = true;
                     _camera.gameObject.SetActive(false);
+                    Game.Instance.TimingRun = true;
                 }
             }
         }

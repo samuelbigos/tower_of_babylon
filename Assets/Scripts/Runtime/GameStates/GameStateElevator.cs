@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -9,12 +10,14 @@ using Easing = Utils.Easing;
 public class GameStateElevator : MonoBehaviour, IGameState
 {
     [SerializeField] private RawImage _whiteFade;
+    [SerializeField] private TextMeshProUGUI _credits;
     
     private Player _player;
     private float _duration;
 
     public void OnEnter(IGameState prevState)
     {
+        Game.Instance.TimingRun = false;
     }
     
     public void OnExit(IGameState newState)
@@ -31,7 +34,14 @@ public class GameStateElevator : MonoBehaviour, IGameState
         t = Easing.In(t);
         _whiteFade.color = new Color(1.0f, 1.0f, 1.0f, t);
 
-        if (_duration > 35.0f)
+        _credits.text =
+            $"You scaled the tower in {Game.Instance.RunTime:F2} seconds.<br><br>Tower of Babylon is a game by Sam Bigos and Floyd Billingy.<br><br>It was inspired by a short story of the same name by Ted Chiang.<br><br>Scale the tower again and beat your time!<br><br><sprite index=0>";
+        lower = 20.0f;
+        t = Mathf.Clamp01((_duration - lower) / 10.0f);
+        t = Easing.In(t);
+        _credits.color = new Color(0.0f, 0.0f, 0.0f, t);
+        
+        if (InputManager.Instance.PlayerShoot.action.WasPressedThisFrame() && _duration > 25.0f)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
