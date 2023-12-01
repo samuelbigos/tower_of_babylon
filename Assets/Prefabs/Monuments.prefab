@@ -113,6 +113,10 @@ PrefabInstance:
       propertyPath: _text
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 2190301119063260104, guid: 97476ab281499764ab5a6630771f8139, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -876546973899608171, guid: e6b88660d9115584fb8c8a3ea608dea6, type: 3}
     - target: {fileID: 5471403412358361822, guid: 97476ab281499764ab5a6630771f8139, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
@@ -199,6 +203,10 @@ PrefabInstance:
       propertyPath: _text
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 2190301119063260104, guid: 97476ab281499764ab5a6630771f8139, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -876546973899608171, guid: e6b88660d9115584fb8c8a3ea608dea6, type: 3}
     - target: {fileID: 5471403412358361822, guid: 97476ab281499764ab5a6630771f8139, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
@@ -285,6 +293,10 @@ PrefabInstance:
       propertyPath: _text
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 2190301119063260104, guid: 97476ab281499764ab5a6630771f8139, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -876546973899608171, guid: 15894b331d127b04a82f4e17a4491e8e, type: 3}
     - target: {fileID: 5471403412358361822, guid: 97476ab281499764ab5a6630771f8139, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
@@ -451,6 +463,10 @@ PrefabInstance:
       propertyPath: _text
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 2190301119063260104, guid: 97476ab281499764ab5a6630771f8139, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -876546973899608171, guid: e6b88660d9115584fb8c8a3ea608dea6, type: 3}
     - target: {fileID: 5471403412358361822, guid: 97476ab281499764ab5a6630771f8139, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
@@ -795,6 +811,10 @@ PrefabInstance:
       propertyPath: _text
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 2190301119063260104, guid: 97476ab281499764ab5a6630771f8139, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -876546973899608171, guid: 15894b331d127b04a82f4e17a4491e8e, type: 3}
     - target: {fileID: 5471403412358361822, guid: 97476ab281499764ab5a6630771f8139, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
@@ -879,9 +899,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1628836116601216365, guid: 97476ab281499764ab5a6630771f8139, type: 3}
       propertyPath: _text
-      value: To grapple, aim with <sprite="T_Mouse_XY_Key_Dark" index=0> (mouse)
-        and hold <sprite index=0>. The grapple has limited range but can be upgraded
-        by visiting these monuments.
+      value: To grapple, aim with <sprite="T_Mouse_XY_Key_Dark" index=0> and hold
+        <sprite index=0>.<br><br> While grappling, <sprite="T_W_Key_Dark" index=0><sprite="T_S_Key_Dark"
+        index=0> will retract/extend the grapple, while <sprite="T_A_Key_Dark" index=0><sprite="T_D_Key_Dark"
+        index=0> will swing.<br><br> Retracting the grapple builds momentum.
       objectReference: {fileID: 0}
     - target: {fileID: 5471403412358361822, guid: 97476ab281499764ab5a6630771f8139, type: 3}
       propertyPath: m_StaticEditorFlags

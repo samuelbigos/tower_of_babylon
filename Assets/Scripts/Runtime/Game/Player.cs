@@ -98,17 +98,19 @@ public class Player : Singleton<Player>
         
         _jumpSrc = gameObject.AddComponent<AudioSource>();
         _jumpSrc.clip = _jump;
-        _jumpSrc.volume = 0.0f;
+        _jumpSrc.volume = 0.25f;
         
         _grappleSrc = gameObject.AddComponent<AudioSource>();
         _grappleSrc.clip = _grapple;
+        _grappleSrc.volume = 0.5f;
         
         _grappleImpactSrc = gameObject.AddComponent<AudioSource>();
         _grappleImpactSrc.clip = _grappleImpact;
+        _grappleImpactSrc.volume = 0.25f;
         
         _landSrc = gameObject.AddComponent<AudioSource>();
         _landSrc.clip = _land;
-        _landSrc.volume = 0.0f;
+        _landSrc.volume = 0.25f;
 
         _monumentSrc = gameObject.AddComponent<AudioSource>();
         _monumentSrc.clip = _monument;
