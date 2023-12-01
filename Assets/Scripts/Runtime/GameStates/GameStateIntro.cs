@@ -54,7 +54,12 @@ public class GameStateIntro : MonoBehaviour, IGameState
     
     public void ManualUpdate()
     {
-        if ((InputManager.Instance.PlayerShoot.action.WasPressedThisFrame() || Game.Instance.InGym) && !_canExit)
+        if (InputManager.Instance.PlayerShoot.action.WasPressedThisFrame() && _transitioning)
+        {
+            _speed = true;
+        }
+        
+        if ((InputManager.Instance.PlayerShoot.action.WasPressedThisFrame() || Game.Instance.InGym) && !_canExit && !_transitioning)
         {
             if (_transitioning)
             {
@@ -82,6 +87,7 @@ public class GameStateIntro : MonoBehaviour, IGameState
                 _camera.transform.rotation = targetTransform.rotation;
 
                 _transitioning = false;
+                _speed = false;
 
                 if (_currentIntro == _introTransforms.Count - 1)
                 {

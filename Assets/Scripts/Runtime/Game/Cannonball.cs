@@ -8,6 +8,8 @@ using Vector3 = UnityEngine.Vector3;
 public class Cannonball : MonoBehaviour
 {
     private Rigidbody _rb;
+
+    [SerializeField] private ParticleSystem _poof;
     
     private void Awake()
     {
@@ -43,6 +45,10 @@ public class Cannonball : MonoBehaviour
     {
         if (other.gameObject.layer == (int)Utilities.PhysicsLayers.Monument || other.gameObject.layer == (int)Utilities.PhysicsLayers.KillZone)
         {
+            ParticleSystem ps = Instantiate(_poof);
+            ps.transform.parent = Game.Instance.transform;
+            ps.transform.position = gameObject.transform.position;
+            
             Destroy(gameObject);
         }
     }

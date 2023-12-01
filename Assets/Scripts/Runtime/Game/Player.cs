@@ -28,6 +28,8 @@ public class Player : Singleton<Player>
     
     [SerializeField] private InputActionReference resetAction;
     
+    [SerializeField] private AudioSource _music;
+    
     private PlayerInput _input;
 
     private bool _prevOverUi;
@@ -145,18 +147,21 @@ public class Player : Singleton<Player>
         }
         
         // Disable player input if mouse over ImGui elements.
-        ImGuiIOPtr io = ImGui.GetIO();
-        if (io.WantCaptureMouse && !_prevOverUi)
+        if (DebugImGui.Exists)
         {
-            _input.DeactivateInput();
-            _prevOverUi = true;
+            ImGuiIOPtr io = ImGui.GetIO();
+            if (io.WantCaptureMouse && !_prevOverUi)
+            {
+                _input.DeactivateInput();
+                _prevOverUi = true;
+            }
+            else if (!io.WantCaptureMouse && _prevOverUi)
+            {
+                _input.ActivateInput();
+                _prevOverUi = false;
+            }
         }
-        else if (!io.WantCaptureMouse && _prevOverUi)
-        {
-            _input.ActivateInput();
-            _prevOverUi = false;
-        }
-        
+
         if (GSM.Instance.CurrentState is GameStateDead)
         {
             _respawnTime -= Time.deltaTime;
@@ -214,6 +219,11 @@ public class Player : Singleton<Player>
             _grappleRenderer.transform.localScale = new Vector3(s,s,s);
             
             _grappleHalo.transform.localRotation = Quaternion.Euler(0.0f, 360.0f * _grappleTransitionTimer, 0.0f);   
+        }
+
+        if (GSM.Instance.CurrentState is GameStateElevator)
+        {
+            _music.Stop();
         }
     }
 

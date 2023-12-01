@@ -25,8 +25,8 @@ public class GameStateElevator : MonoBehaviour, IGameState
     {
         _duration += Time.deltaTime;
 
-        float lower = 10.0f;
-        float upper = 30.0f;
+        float lower = 15.0f;
+        float upper = 25.0f;
         float t = Mathf.Clamp01((_duration - lower) / (upper - lower));
         t = Easing.In(t);
         _whiteFade.color = new Color(1.0f, 1.0f, 1.0f, t);

@@ -38,6 +38,8 @@ public class Elevator : MonoBehaviour
                     _state = State.Moving;
                     _startPosition = transform.position;
                     _timer = 0.0f;
+                    
+                    GetComponent<AudioSource>().Play();
                 }
                 break;
             case State.Moving:
